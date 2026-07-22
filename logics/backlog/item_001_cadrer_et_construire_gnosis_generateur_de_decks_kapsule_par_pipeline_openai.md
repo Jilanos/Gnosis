@@ -1,10 +1,10 @@
 ## item_001_cadrer_et_construire_gnosis_generateur_de_decks_kapsule_par_pipeline_openai - Cadrer et construire Gnosis, generateur de decks Kapsule par pipeline OpenAI
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Ready
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 100%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
@@ -75,6 +75,7 @@ l'architecture du pipeline et rendre le depot pret pour l'implementation.
 - Hybrid rationale: Derived from request `req_000_cadrer_et_construire_gnosis_generateur_de_decks_kapsule_par_pipeline_openai` and kept bounded to one coherent delivery slice.
 - Source file: `logics/request/req_000_cadrer_et_construire_gnosis_generateur_de_decks_kapsule_par_pipeline_openai.md`.
 - Generated locally by logics-manager, then groomed for the Gnosis MVP framing.
+- Task `task_001_cadrer_et_construire_gnosis_generateur_de_decks_kapsule_par_pipeline_openai` was finished via `logics-manager flow finish task` on 2026-07-22.
 
 # Tasks
 - `task_001_cadrer_et_construire_gnosis_generateur_de_decks_kapsule_par_pipeline_openai`

@@ -1,7 +1,7 @@
 ## req_000_cadrer_et_construire_gnosis_generateur_de_decks_kapsule_par_pipeline_openai - Cadrer et construire Gnosis, generateur de decks Kapsule par pipeline OpenAI
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Ready
+> Status: Done
 > Understanding: 90
 > Confidence: 85
 > Complexity: High
