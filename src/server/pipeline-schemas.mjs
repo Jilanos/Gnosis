@@ -3,6 +3,94 @@ const stringArray = {
   items: { type: "string" },
 };
 
+const richText = {
+  type: "string",
+  minLength: 1,
+  maxLength: 2000,
+};
+
+const quizQuestion = {
+  type: "object",
+  additionalProperties: false,
+  required: ["q", "choices", "answer", "explanation"],
+  properties: {
+    q: { type: "string" },
+    choices: {
+      type: "array",
+      minItems: 2,
+      maxItems: 6,
+      items: { type: "string" },
+    },
+    answer: { type: "integer", minimum: 0 },
+    explanation: { type: "string" },
+  },
+};
+
+const sectionSchema = {
+  type: "object",
+  anyOf: [
+    {
+      type: "object",
+      additionalProperties: false,
+      required: ["type", "content"],
+      properties: {
+        type: { type: "string", const: "intro" },
+        content: richText,
+      },
+    },
+    {
+      type: "object",
+      additionalProperties: false,
+      required: ["type", "heading", "content"],
+      properties: {
+        type: { type: "string", const: "concept" },
+        heading: { type: "string" },
+        content: richText,
+      },
+    },
+    {
+      type: "object",
+      additionalProperties: false,
+      required: ["type", "heading", "content"],
+      properties: {
+        type: { type: "string", const: "example" },
+        heading: { type: "string" },
+        content: richText,
+      },
+    },
+    {
+      type: "object",
+      additionalProperties: false,
+      required: ["type", "heading", "items"],
+      properties: {
+        type: { type: "string", const: "takeaways" },
+        heading: { type: "string" },
+        items: {
+          type: "array",
+          minItems: 1,
+          maxItems: 10,
+          items: { type: "string" },
+        },
+      },
+    },
+    {
+      type: "object",
+      additionalProperties: false,
+      required: ["type", "heading", "questions"],
+      properties: {
+        type: { type: "string", const: "quiz" },
+        heading: { type: "string" },
+        questions: {
+          type: "array",
+          minItems: 1,
+          maxItems: 10,
+          items: quizQuestion,
+        },
+      },
+    },
+  ],
+};
+
 export const normalizedSchema = {
   type: "object",
   additionalProperties: false,
@@ -138,7 +226,7 @@ export const deckOutputSchema = {
   additionalProperties: false,
   required: ["schemaVersion", "id", "title", "description", "tags", "cards"],
   properties: {
-    schemaVersion: { const: 1 },
+    schemaVersion: { type: "integer", const: 1 },
     id: { type: "string" },
     title: { type: "string" },
     description: { type: "string" },
@@ -158,14 +246,10 @@ export const deckOutputSchema = {
           sections: {
             type: "array",
             minItems: 5,
-            items: {
-              type: "object",
-              additionalProperties: true,
-            },
+            items: sectionSchema,
           },
         },
       },
     },
   },
 };
-

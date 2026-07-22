@@ -7,7 +7,7 @@ export const kapsuleDeckSchema = {
   additionalProperties: false,
   required: ["schemaVersion", "id", "title", "cards"],
   properties: {
-    schemaVersion: { const: 1 },
+    schemaVersion: { type: "integer", const: 1 },
     id: {
       type: "string",
       pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$",
@@ -68,7 +68,7 @@ export const kapsuleDeckSchema = {
       additionalProperties: false,
       required: ["type", "content"],
       properties: {
-        type: { const: "intro" },
+        type: { type: "string", const: "intro" },
         content: { $ref: "#/$defs/richText" },
       },
     },
@@ -77,7 +77,7 @@ export const kapsuleDeckSchema = {
       additionalProperties: false,
       required: ["type", "content"],
       properties: {
-        type: { const: "concept" },
+        type: { type: "string", const: "concept" },
         heading: { type: "string", minLength: 1, maxLength: 120 },
         content: { $ref: "#/$defs/richText" },
         image: { $ref: "#/$defs/image" },
@@ -88,7 +88,7 @@ export const kapsuleDeckSchema = {
       additionalProperties: false,
       required: ["type", "content"],
       properties: {
-        type: { const: "example" },
+        type: { type: "string", const: "example" },
         heading: { type: "string", minLength: 1, maxLength: 120 },
         content: { $ref: "#/$defs/richText" },
         image: { $ref: "#/$defs/image" },
@@ -99,7 +99,7 @@ export const kapsuleDeckSchema = {
       additionalProperties: false,
       required: ["type", "items"],
       properties: {
-        type: { const: "takeaways" },
+        type: { type: "string", const: "takeaways" },
         heading: { type: "string", minLength: 1, maxLength: 120 },
         items: {
           type: "array",
@@ -114,7 +114,7 @@ export const kapsuleDeckSchema = {
       additionalProperties: false,
       required: ["type", "questions"],
       properties: {
-        type: { const: "quiz" },
+        type: { type: "string", const: "quiz" },
         heading: { type: "string", minLength: 1, maxLength: 120 },
         questions: {
           type: "array",
@@ -157,4 +157,3 @@ export const kapsuleDeckSchema = {
     },
   },
 };
-

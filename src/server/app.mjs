@@ -16,6 +16,7 @@ export function createApp(env = process.env) {
       ok: true,
       model: env.OPENAI_MODEL || "gpt-5.6",
       mock: env.GNOSIS_MOCK_OPENAI === "1" || env.NODE_ENV === "test",
+      hasServerApiKey: Boolean(env.OPENAI_API_KEY),
     });
   });
 
@@ -27,6 +28,7 @@ export function createApp(env = process.env) {
       }
 
       const rawOptions = req.body?.options ?? {};
+      const requestApiKey = String(req.body?.apiKey || "").trim();
       const options = {
         title: String(rawOptions.title || "").trim(),
         language: rawOptions.language === "anglais" ? "anglais" : "francais",
@@ -39,7 +41,8 @@ export function createApp(env = process.env) {
         targetCards: clampInteger(rawOptions.targetCards, 2, maxCards, 8),
       };
 
-      const result = await generateDeckPipeline({ topics, options, env });
+      const requestEnv = requestApiKey ? { ...env, OPENAI_API_KEY: requestApiKey } : env;
+      const result = await generateDeckPipeline({ topics, options, env: requestEnv });
       res.json(result);
     } catch (error) {
       const status = error.validation ? 422 : error.message.includes("OPENAI_API_KEY") ? 503 : 500;
@@ -52,4 +55,3 @@ export function createApp(env = process.env) {
 
   return app;
 }
-

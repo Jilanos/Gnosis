@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import assert from "node:assert/strict";
+import { estimateCardMetrics } from "../src/server/card-metrics.mjs";
 import { validateDeck } from "../src/server/validation.mjs";
 
 test("validates a Kapsule deck fixture", () => {
@@ -17,3 +18,13 @@ test("rejects invalid quiz answer indexes", () => {
   assert.match(validation.errors[0].message, /hors limites/);
 });
 
+test("estimates card words and duration from readable content", () => {
+  const deck = JSON.parse(readFileSync("fixtures/sample-deck.json", "utf8"));
+  const metrics = estimateCardMetrics(deck.cards[0]);
+
+  assert.equal(metrics.questionCount, 1);
+  assert.equal(metrics.calculatedDurationMin, 2);
+  assert.equal(metrics.schemaDurationMin, 2);
+  assert.equal(metrics.belowMinimum, true);
+  assert.ok(metrics.wordCount > 40);
+});

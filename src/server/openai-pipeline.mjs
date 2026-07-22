@@ -6,6 +6,7 @@ import {
   normalizedSchema,
   planSchema,
 } from "./pipeline-schemas.mjs";
+import { applyCalculatedDurations, estimateDeckMetrics } from "./card-metrics.mjs";
 import { createMockPipeline } from "./mock-pipeline.mjs";
 import { assertDeck, validateDeck, validationSummary } from "./validation.mjs";
 import { slugify, uniqueSlug } from "./utils.mjs";
@@ -44,6 +45,7 @@ async function callStructured(client, model, name, schema, input) {
 }
 
 function pipelineSummary(normalized, families, expansion, plan, deck) {
+  const metrics = estimateDeckMetrics(deck);
   return [
     { name: "Normalisation", summary: `${normalized.topics.length} sujets nettoyes` },
     { name: "Familles", summary: `${families.families.length} familles pedagogiques` },
@@ -53,6 +55,7 @@ function pipelineSummary(normalized, families, expansion, plan, deck) {
     },
     { name: "Plan", summary: `${plan.cards.length} fiches planifiees` },
     { name: "Deck", summary: `${deck.cards.length} fiches Kapsule` },
+    { name: "Calibration", summary: `${metrics.totalWords} mots / ${metrics.totalDurationMin} min calculees` },
     { name: "Validation", summary: "Schema Kapsule verifie" },
   ];
 }
@@ -62,9 +65,8 @@ function normalizeDeckIds(deck) {
   deck.id = slugify(deck.id || deck.title, "deck-gnosis");
   for (const card of deck.cards ?? []) {
     card.id = uniqueSlug(card.id || card.title, used);
-    card.durationMin = Math.min(10, Math.max(1, Number(card.durationMin) || 7));
   }
-  return deck;
+  return applyCalculatedDurations(deck);
 }
 
 async function repairDeck(client, model, deck, validation) {
@@ -96,11 +98,13 @@ export async function generateDeckPipeline({ topics, options = {}, env = process
 
   if (useMock) {
     const mock = createMockPipeline(topics, options);
+    normalizeDeckIds(mock.deck);
     const validation = assertDeck(mock.deck);
     return {
       ...mock,
       validation,
       pipeline: pipelineSummary(mock.normalized, mock.families, mock.expansion, mock.plan, mock.deck),
+      metrics: estimateDeckMetrics(mock.deck),
       model: "mock",
     };
   }
@@ -118,6 +122,8 @@ export async function generateDeckPipeline({ topics, options = {}, env = process
       sections: ["intro", "concept", "example", "takeaways", "quiz"],
       cardDurationMin: "1-10",
       quiz: "1 a 3 questions utiles par fiche, choix unique, answer base 0",
+      durationCalibration:
+        "durationMin est recalcule par Gnosis: ceil(mots / 190) + ceil(nb_questions / 2), borne a 10 pour le schema",
     },
   };
 
@@ -163,6 +169,7 @@ ${JSON.stringify(normalized, null, 2)}`,
       content: `Transforme les familles enrichies en plan de deck Kapsule.
 Le nombre cible de fiches est ${options.targetCards || 8}; ne depasse pas 24 fiches.
 Chaque fiche doit etre autonome, progressive et lisible en 5 a 10 minutes.
+La duree finale sera calculee depuis le volume reel: ceil(mots / 190) + ceil(nb_questions / 2).
 Entree:
 ${JSON.stringify({ normalized, families, expansion, options }, null, 2)}`,
     },
@@ -181,6 +188,7 @@ Respecte strictement:
 - aucune propriete additionnelle
 - Markdown leger uniquement dans content
 - fiches denses, precises, concretes, avec exemples et pieges
+- durationMin doit correspondre au volume reel: ceil(mots / 190) + ceil(nb_questions / 2)
 
 Plan:
 ${JSON.stringify(plan, null, 2)}
@@ -212,7 +220,7 @@ ${JSON.stringify(expansion, null, 2)}`,
     deck: finalDeck,
     validation,
     pipeline: pipelineSummary(normalized, families, expansion, plan, finalDeck),
+    metrics: estimateDeckMetrics(finalDeck),
     model,
   };
 }
-

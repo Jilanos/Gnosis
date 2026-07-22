@@ -13,5 +13,6 @@ test("mock pipeline produces a valid Kapsule deck", async () => {
   assert.equal(result.deck.schemaVersion, 1);
   assert.equal(result.deck.cards.length, 3);
   assert.equal(result.deck.cards[0].sections.at(-1).type, "quiz");
+  assert.equal(result.metrics.cards.length, 3);
+  assert.equal(result.deck.cards[0].durationMin, result.metrics.cards[0].schemaDurationMin);
 });
-
