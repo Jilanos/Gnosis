@@ -2,17 +2,17 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import {
   AlertTriangle,
-  BookOpen,
   Brain,
   CheckCircle2,
+  Clock3,
   Copy,
   Download,
-  FileJson,
-  Layers3,
+  KeyRound,
   Loader2,
-  Network,
+  Moon,
   Play,
   Sparkles,
+  Sun,
 } from "lucide-react";
 import "./styles.css";
 
@@ -44,7 +44,125 @@ function slugDownloadName(deck) {
   return `${deck?.id || "deck-gnosis"}.json`;
 }
 
+function prefersDark() {
+  if (typeof window === "undefined" || !window.matchMedia) return true;
+  return !window.matchMedia("(prefers-color-scheme: light)").matches;
+}
+
+function useTheme() {
+  const [theme, setTheme] = React.useState(() => (prefersDark() ? "dark" : "light"));
+
+  React.useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  const toggle = React.useCallback(() => {
+    setTheme((current) => (current === "dark" ? "light" : "dark"));
+  }, []);
+
+  return [theme, toggle];
+}
+
+// Fond animé : nébuleuse dérivante + champ d'étoiles (respecte prefers-reduced-motion).
+function Sky({ theme }) {
+  const canvasRef = React.useRef(null);
+  const themeRef = React.useRef(theme);
+  themeRef.current = theme;
+
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return undefined;
+    const ctx = canvas.getContext("2d");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let width = 0;
+    let height = 0;
+    let stars = [];
+    let elapsed = 0;
+    let frame = 0;
+
+    const blobs = [
+      { x: 0.22, y: 0.18, r: 0.55, hue: [94, 234, 212] },
+      { x: 0.82, y: 0.3, r: 0.5, hue: [71, 199, 245] },
+      { x: 0.6, y: 0.85, r: 0.6, hue: [139, 156, 240] },
+    ];
+
+    function isLight() {
+      return themeRef.current === "light";
+    }
+
+    function init() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const count = Math.min(140, Math.floor((width * height) / 13000));
+      stars = Array.from({ length: count }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: Math.random() * 1.3 + 0.3,
+        a: Math.random() * 0.5 + 0.2,
+        tw: Math.random() * Math.PI * 2,
+      }));
+    }
+
+    function draw() {
+      const light = isLight();
+      ctx.clearRect(0, 0, width, height);
+
+      blobs.forEach((bl, b) => {
+        const drift = reduce ? 0 : Math.sin(elapsed * 0.0004 + b * 2) * 0.04;
+        const cx = (bl.x + drift) * width;
+        const cy = (bl.y + Math.cos(elapsed * 0.0003 + b) * 0.03) * height;
+        const rad = bl.r * Math.max(width, height) * 0.6;
+        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
+        const op = light ? 0.14 : 0.2;
+        grad.addColorStop(0, `rgba(${bl.hue[0]}, ${bl.hue[1]}, ${bl.hue[2]}, ${op})`);
+        grad.addColorStop(1, `rgba(${bl.hue[0]}, ${bl.hue[1]}, ${bl.hue[2]}, 0)`);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+      });
+
+      const starColor = light ? "20, 80, 90" : "190, 230, 240";
+      stars.forEach((s) => {
+        const tw = reduce ? 1 : Math.sin(elapsed * 0.002 + s.tw) * 0.4 + 0.6;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${starColor}, ${s.a * tw})`;
+        ctx.fill();
+      });
+
+      if (!reduce) {
+        elapsed += 16;
+        frame = window.requestAnimationFrame(draw);
+      }
+    }
+
+    function handleResize() {
+      init();
+      if (reduce) draw();
+    }
+
+    init();
+    draw();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  return <canvas id="sky" ref={canvasRef} aria-hidden="true" />;
+}
+
 function App() {
+  const [theme, toggleTheme] = useTheme();
   const [topicsText, setTopicsText] = React.useState(DEFAULT_TOPICS);
   const [options, setOptions] = React.useState({
     title: "",
@@ -53,12 +171,14 @@ function App() {
     density: "dense",
     targetCards: 8,
   });
+  const [apiKey, setApiKey] = React.useState("");
   const [state, setState] = React.useState({ status: "idle" });
   const [copied, setCopied] = React.useState(false);
 
   const topics = splitTopics(topicsText);
   const deck = state.result?.deck;
   const plan = state.result?.plan;
+  const metrics = state.result?.metrics;
   const pipeline = state.result?.pipeline ?? [];
 
   async function generateDeck() {
@@ -71,6 +191,7 @@ function App() {
         body: JSON.stringify({
           topics,
           options,
+          apiKey: apiKey.trim(),
         }),
       });
       const body = await response.json();
@@ -108,196 +229,239 @@ function App() {
   }
 
   return (
-    <main className="shell">
-      <header className="topbar">
-        <div className="brand">
-          <span className="brand-mark">
-            <Brain size={22} />
-          </span>
-          <div>
-            <strong>Gnosis</strong>
-            <span>Generateur de decks Kapsule</span>
-          </div>
-        </div>
-        <div className="status-pill">
-          <Network size={16} />
-          Pipeline OpenAI structure
-        </div>
-      </header>
+    <>
+      <Sky theme={theme} />
+      <div className="vignette" aria-hidden="true" />
 
-      <section className="hero">
-        <div className="hero-copy">
-          <p className="eyebrow">Apprentissage technique structure</p>
-          <h1>Transforme des notions brutes en fiches Kapsule completes.</h1>
-          <p>
-            Colle une liste de sujets, laisse Gnosis les organiser en familles,
-            enrichir les notions proches, puis generer un deck valide avec quiz.
-          </p>
-        </div>
-        <div className="hero-panel" aria-label="Resume du pipeline">
-          <div className="metric">
-            <Layers3 size={20} />
-            <span>{topics.length}</span>
-            <small>sujets detectes</small>
-          </div>
-          <div className="metric">
-            <BookOpen size={20} />
-            <span>{options.targetCards}</span>
-            <small>fiches ciblees</small>
-          </div>
-          <div className="metric">
-            <FileJson size={20} />
-            <span>v1</span>
-            <small>schema Kapsule</small>
-          </div>
-        </div>
-      </section>
-
-      <section className="workspace">
-        <form className="control-surface" onSubmit={(event) => event.preventDefault()}>
-          <div className="surface-head">
+      <main className="shell">
+        <header className="topbar">
+          <div className="brand">
+            <span className="brand-mark">
+              <Brain size={19} />
+            </span>
             <div>
-              <h2>Entrée</h2>
-              <p>Une notion par ligne, ou separees par virgules.</p>
+              <strong>Gnosis</strong>
+              <span className="sub">Generateur de decks Kapsule</span>
             </div>
+          </div>
+
+          <div className="mini-metrics" aria-label="Resume du pipeline">
+            <span className="mm">
+              <span className="v">{topics.length}</span>
+              <span className="l">sujets</span>
+            </span>
+            <span className="mm">
+              <span className="v">{options.targetCards}</span>
+              <span className="l">fiches</span>
+            </span>
+            <span className="mm">
+              <span className="v">v1</span>
+              <span className="l">Kapsule</span>
+            </span>
+          </div>
+
+          <div className="topbar-right">
+            <span className="status-pill">
+              <span className="dot" />
+              Pipeline OpenAI
+            </span>
             <button
-              className="icon-button"
+              className="theme-toggle"
               type="button"
-              title="Reinitialiser l'exemple"
-              onClick={() => setTopicsText(DEFAULT_TOPICS)}
+              title="Basculer le theme"
+              aria-label="Basculer le theme"
+              onClick={toggleTheme}
             >
-              <Sparkles size={18} />
+              {theme === "dark" ? <Moon size={17} /> : <Sun size={17} />}
             </button>
           </div>
+        </header>
 
-          <label className="field">
-            <span>Titre du deck</span>
-            <input
-              value={options.title}
-              placeholder="Ex. Reseaux et deploiement web"
-              onChange={(event) => updateOption("title", event.target.value)}
-            />
-          </label>
-
-          <label className="field">
-            <span>Sujets techniques</span>
-            <textarea
-              value={topicsText}
-              rows={14}
-              onChange={(event) => setTopicsText(event.target.value)}
-            />
-          </label>
-
-          <div className="chips" aria-label="Sujets detectes">
-            {topics.slice(0, 18).map((topic) => (
-              <span key={topic}>{topic}</span>
-            ))}
-            {topics.length > 18 && <span>+{topics.length - 18}</span>}
-          </div>
-
-          <div className="settings-grid">
-            <label className="field">
-              <span>Langue</span>
-              <select
-                value={options.language}
-                onChange={(event) => updateOption("language", event.target.value)}
+        <section className="workspace">
+          <form className="surface" onSubmit={(event) => event.preventDefault()}>
+            <div className="surface-head">
+              <div>
+                <h2>Entrée</h2>
+                <span className="hint">Une notion par ligne, ou separees par virgules.</span>
+              </div>
+              <button
+                className="icon-btn"
+                type="button"
+                title="Reinitialiser l'exemple"
+                aria-label="Reinitialiser l'exemple"
+                onClick={() => setTopicsText(DEFAULT_TOPICS)}
               >
-                <option value="francais">Francais</option>
-                <option value="anglais">Anglais</option>
-              </select>
-            </label>
+                <Sparkles size={16} />
+              </button>
+            </div>
 
-            <label className="field">
-              <span>Niveau</span>
-              <select
-                value={options.level}
-                onChange={(event) => updateOption("level", event.target.value)}
-              >
-                {LEVELS.map((level) => (
-                  <option key={level.value} value={level.value}>
-                    {level.label}
-                  </option>
+            <div className="scroll">
+              <label className="field">
+                <span className="flabel">Titre du deck</span>
+                <input
+                  value={options.title}
+                  placeholder="Ex. Reseaux et deploiement web"
+                  onChange={(event) => updateOption("title", event.target.value)}
+                />
+              </label>
+
+              <label className="field">
+                <span className="flabel">Sujets techniques</span>
+                <textarea
+                  value={topicsText}
+                  rows={7}
+                  onChange={(event) => setTopicsText(event.target.value)}
+                />
+              </label>
+
+              <div className="chips" aria-label="Sujets detectes">
+                {topics.slice(0, 12).map((topic) => (
+                  <span key={topic}>{topic}</span>
                 ))}
-              </select>
-            </label>
+                {topics.length > 12 && <span className="more">+{topics.length - 12}</span>}
+              </div>
 
-            <label className="field">
-              <span>Densite</span>
-              <select
-                value={options.density}
-                onChange={(event) => updateOption("density", event.target.value)}
+              <div className="settings-grid">
+                <label className="field">
+                  <span className="flabel">Langue</span>
+                  <select
+                    value={options.language}
+                    onChange={(event) => updateOption("language", event.target.value)}
+                  >
+                    <option value="francais">Francais</option>
+                    <option value="anglais">Anglais</option>
+                  </select>
+                </label>
+
+                <label className="field">
+                  <span className="flabel">Niveau</span>
+                  <select
+                    value={options.level}
+                    onChange={(event) => updateOption("level", event.target.value)}
+                  >
+                    {LEVELS.map((level) => (
+                      <option key={level.value} value={level.value}>
+                        {level.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="field">
+                  <span className="flabel">Densite</span>
+                  <select
+                    value={options.density}
+                    onChange={(event) => updateOption("density", event.target.value)}
+                  >
+                    <option value="concise">Concise</option>
+                    <option value="dense">Dense</option>
+                    <option value="maximale">Maximale</option>
+                  </select>
+                </label>
+
+                <label className="field">
+                  <span className="flabel">Fiches ciblees</span>
+                  <input
+                    type="number"
+                    min="2"
+                    max="24"
+                    value={options.targetCards}
+                    onChange={(event) => updateOption("targetCards", Number(event.target.value))}
+                  />
+                </label>
+              </div>
+
+              <label className="field" style={{ marginBottom: 0 }}>
+                <span className="flabel">Cle API OpenAI</span>
+                <div className="input-icon">
+                  <KeyRound size={15} />
+                  <input
+                    type="password"
+                    value={apiKey}
+                    placeholder="sk-..."
+                    autoComplete="off"
+                    spellCheck={false}
+                    onChange={(event) => setApiKey(event.target.value)}
+                  />
+                </div>
+              </label>
+            </div>
+
+            <div className="control-foot">
+              <button
+                className="primary"
+                type="button"
+                disabled={state.status === "loading" || topics.length === 0}
+                onClick={generateDeck}
               >
-                <option value="concise">Concise</option>
-                <option value="dense">Dense</option>
-                <option value="maximale">Maximale</option>
-              </select>
-            </label>
-
-            <label className="field">
-              <span>Fiches ciblees</span>
-              <input
-                type="number"
-                min="2"
-                max="24"
-                value={options.targetCards}
-                onChange={(event) => updateOption("targetCards", Number(event.target.value))}
-              />
-            </label>
-          </div>
-
-          <button
-            className="primary"
-            type="button"
-            disabled={state.status === "loading" || topics.length === 0}
-            onClick={generateDeck}
-          >
-            {state.status === "loading" ? <Loader2 className="spin" size={18} /> : <Play size={18} />}
-            Generer le deck
-          </button>
-        </form>
-
-        <section className="result-surface">
-          <div className="surface-head">
-            <div>
-              <h2>Sortie</h2>
-              <p>Plan intermediaire, validation et JSON Kapsule.</p>
-            </div>
-            <div className="actions">
-              <button className="icon-button" type="button" title="Copier le JSON" disabled={!deck} onClick={copyDeck}>
-                <Copy size={18} />
-              </button>
-              <button className="icon-button" type="button" title="Telecharger le deck" disabled={!deck} onClick={downloadDeck}>
-                <Download size={18} />
+                {state.status === "loading" ? (
+                  <Loader2 className="spin" size={17} />
+                ) : (
+                  <Play size={17} />
+                )}
+                Generer le deck
               </button>
             </div>
-          </div>
+          </form>
 
-          {state.status === "idle" && <EmptyState />}
-          {state.status === "loading" && <LoadingState />}
-          {state.status === "error" && <ErrorState message={state.error} />}
-          {state.status === "done" && (
-            <DeckResult
-              deck={deck}
-              plan={plan}
-              pipeline={pipeline}
-              validation={state.result.validation}
-              copied={copied}
-            />
-          )}
+          <section className="surface">
+            <div className="surface-head">
+              <div>
+                <h2>Sortie</h2>
+                <span className="hint">Plan intermediaire, validation et JSON Kapsule.</span>
+              </div>
+              <div className="head-actions">
+                <button
+                  className="icon-btn"
+                  type="button"
+                  title="Copier le JSON"
+                  disabled={!deck}
+                  onClick={copyDeck}
+                >
+                  <Copy size={16} />
+                </button>
+                <button
+                  className="icon-btn"
+                  type="button"
+                  title="Telecharger le deck"
+                  disabled={!deck}
+                  onClick={downloadDeck}
+                >
+                  <Download size={16} />
+                </button>
+              </div>
+            </div>
+
+            <div className="scroll">
+              {state.status === "idle" && <EmptyState />}
+              {state.status === "loading" && <LoadingState />}
+              {state.status === "error" && <ErrorState message={state.error} />}
+              {state.status === "done" && (
+                <DeckResult
+                  deck={deck}
+                  plan={plan}
+                  metrics={metrics}
+                  pipeline={pipeline}
+                  validation={state.result.validation}
+                  copied={copied}
+                />
+              )}
+            </div>
+          </section>
         </section>
-      </section>
-    </main>
+      </main>
+    </>
   );
 }
 
 function EmptyState() {
   return (
-    <div className="empty-state">
-      <Brain size={38} />
+    <div className="state">
+      <Brain size={34} />
       <h3>Le pipeline attend tes sujets.</h3>
       <p>
-        La generation passe par normalisation, familles, expansion, plan, fiches
-        et validation Kapsule.
+        La generation passe par normalisation, familles, expansion, plan, fiches et validation
+        Kapsule.
       </p>
     </div>
   );
@@ -306,8 +470,8 @@ function EmptyState() {
 function LoadingState() {
   const steps = ["Normalisation", "Familles", "Expansion", "Plan", "Fiches", "Validation"];
   return (
-    <div className="loading-state">
-      <Loader2 className="spin" size={34} />
+    <div className="state">
+      <Loader2 className="spin" size={32} />
       <h3>Generation en cours</h3>
       <div className="step-list">
         {steps.map((step) => (
@@ -320,58 +484,88 @@ function LoadingState() {
 
 function ErrorState({ message }) {
   return (
-    <div className="error-state">
-      <AlertTriangle size={34} />
+    <div className="state is-error">
+      <AlertTriangle size={32} />
       <h3>Generation interrompue</h3>
       <p>{message}</p>
     </div>
   );
 }
 
-function DeckResult({ deck, plan, pipeline, validation, copied }) {
+function DeckResult({ deck, plan, metrics, pipeline, validation, copied }) {
   return (
     <div className="deck-result">
-      <div className="validation-banner">
-        <CheckCircle2 size={18} />
+      <div className="banner">
+        <CheckCircle2 size={17} />
         {validation?.valid ? "Deck valide Kapsule" : "Deck genere avec avertissements"}
-        {copied && <strong>JSON copie</strong>}
+        {copied && <span className="tag">JSON copie</span>}
       </div>
 
-      <div className="pipeline-grid">
-        {pipeline.map((step) => (
-          <div key={step.name} className="pipeline-card">
-            <span>{step.name}</span>
-            <strong>{step.summary}</strong>
-          </div>
-        ))}
-      </div>
+      {pipeline.length > 0 && (
+        <div className="pipeline">
+          {pipeline.map((step, index) => (
+            <div key={step.name} className="pcard">
+              <span className="step-no">{String(index + 1).padStart(2, "0")}</span>
+              <span className="step-name">{step.name}</span>
+              <span className="step-sum">{step.summary}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {plan?.cards?.length > 0 && (
-        <div className="plan-panel">
+        <div className="panel plan">
           <h3>Plan pedagogique</h3>
           <ol>
-            {plan.cards.map((card) => (
+            {plan.cards.map((card, index) => (
               <li key={card.id || card.title}>
-                <strong>{card.title}</strong>
-                <span>{card.objective}</span>
+                <span className="num">{index + 1}</span>
+                <div>
+                  <strong>{card.title}</strong>
+                  <span>{card.objective}</span>
+                </div>
               </li>
             ))}
           </ol>
         </div>
       )}
 
-      <div className="deck-preview">
+      <div className="panel deck-preview">
         <div>
           <h3>{deck.title}</h3>
           <p>{deck.description}</p>
         </div>
-        <span>{deck.cards.length} fiches</span>
+        <span className="badge">{deck.cards.length} fiches</span>
       </div>
 
-      <pre className="json-preview">{JSON.stringify(deck, null, 2)}</pre>
+      {metrics?.cards?.length > 0 && (
+        <div className="panel">
+          <div className="metrics-head">
+            <h3>Calibrage des fiches</h3>
+            <span className="total">
+              <Clock3 size={14} />
+              {metrics.totalWords} mots / {metrics.totalDurationMin} min
+            </span>
+          </div>
+          <div className="mlist">
+            {metrics.cards.map((card) => (
+              <div
+                key={card.cardId || card.title}
+                className={card.belowMinimum ? "mrow short" : "mrow"}
+              >
+                <strong>{card.title}</strong>
+                <span className={card.belowMinimum ? "m flag" : "m"}>{card.wordCount} mots</span>
+                <span className="m">{card.questionCount} quiz</span>
+                <span className="m">{card.schemaDurationMin} min</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <pre className="json">{JSON.stringify(deck, null, 2)}</pre>
     </div>
   );
 }
 
 createRoot(document.getElementById("root")).render(<App />);
-
