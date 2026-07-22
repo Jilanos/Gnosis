@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "reseaux-gnosis",
+  "title": "Reseaux Gnosis",
+  "description": "Fixture valide pour verifier le contrat Kapsule dans Gnosis.",
+  "tags": ["reseau", "gnosis"],
+  "cards": [
+    {
+      "id": "dns",
+      "title": "DNS",
+      "durationMin": 6,
+      "level": "intermediaire",
+      "sections": [
+        {
+          "type": "intro",
+          "content": "Le **DNS** traduit un nom lisible en adresse exploitable par le reseau."
+        },
+        {
+          "type": "concept",
+          "heading": "Resolution",
+          "content": "Un resolver interroge la hierarchie DNS pour trouver un enregistrement comme `A`, `AAAA` ou `CNAME`."
+        },
+        {
+          "type": "example",
+          "heading": "Diagnostic",
+          "content": "`dig example.com A` permet de verifier la resolution IPv4 d'un nom."
+        },
+        {
+          "type": "takeaways",
+          "items": [
+            "DNS relie noms et adresses.",
+            "Les caches et TTL influencent les delais de propagation."
+          ]
+        },
+        {
+          "type": "quiz",
+          "questions": [
+            {
+              "q": "A quoi sert principalement DNS ?",
+              "choices": ["Chiffrer HTTP", "Traduire un nom en donnees de resolution", "Compiler un programme"],
+              "answer": 1,
+              "explanation": "DNS fournit les informations permettant de resoudre un nom, comme une adresse IP."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
