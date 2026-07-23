@@ -3,12 +3,98 @@ import express from "express";
 import { generateDeckPipeline } from "./openai-pipeline.mjs";
 import { clampInteger, compactTopics } from "./utils.mjs";
 
+const DEFAULT_RATE_LIMIT_WINDOW_MS = 60_000;
+const DEFAULT_RATE_LIMIT_MAX = 20;
+
+function parseCsv(value) {
+  return String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function corsOptions(env) {
+  const allowedOrigins = parseCsv(env.CORS_ORIGIN);
+  if (allowedOrigins.length > 0) {
+    return {
+      origin(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+        return callback(new Error("Origine CORS non autorisee."));
+      },
+    };
+  }
+
+  if (env.NODE_ENV === "production") {
+    return { origin: false };
+  }
+
+  return {};
+}
+
+function createRateLimiter(env) {
+  const windowMs = clampInteger(
+    env.RATE_LIMIT_WINDOW_MS,
+    1_000,
+    3_600_000,
+    DEFAULT_RATE_LIMIT_WINDOW_MS,
+  );
+  const maxRequests = clampInteger(env.RATE_LIMIT_MAX, 1, 1_000, DEFAULT_RATE_LIMIT_MAX);
+  const buckets = new Map();
+
+  return function rateLimit(req, res, next) {
+    const now = Date.now();
+    const key = req.ip || req.socket?.remoteAddress || "unknown";
+    const current = buckets.get(key);
+    if (!current || current.resetAt <= now) {
+      buckets.set(key, { count: 1, resetAt: now + windowMs });
+      return next();
+    }
+
+    current.count += 1;
+    if (current.count > maxRequests) {
+      return res.status(429).json({ error: "Trop de generations demandees. Reessaie plus tard." });
+    }
+    return next();
+  };
+}
+
+function shouldProtectServerKey(env, requestApiKey) {
+  return (
+    env.NODE_ENV === "production" &&
+    env.GNOSIS_ALLOW_PUBLIC_API !== "1" &&
+    Boolean(env.OPENAI_API_KEY) &&
+    !requestApiKey
+  );
+}
+
+function verifyAccessToken(req, env, requestApiKey) {
+  if (!shouldProtectServerKey(env, requestApiKey)) return null;
+  const expected = String(env.GNOSIS_ACCESS_TOKEN || "").trim();
+  if (!expected) {
+    return {
+      status: 503,
+      error: "Endpoint non public: configure GNOSIS_ACCESS_TOKEN ou fournis une cle OpenAI utilisateur.",
+    };
+  }
+  const actual = String(req.get("x-gnosis-access-token") || "").trim();
+  if (actual !== expected) {
+    return { status: 401, error: "Acces non autorise pour utiliser la cle OpenAI serveur." };
+  }
+  return null;
+}
+
+function errorStatus(error) {
+  if (error.validation) return 422;
+  return error.status || 500;
+}
+
 export function createApp(env = process.env) {
   const app = express();
   const maxTopics = clampInteger(env.MAX_INPUT_TOPICS, 1, 200, 80);
   const maxCards = clampInteger(env.MAX_CARDS, 2, 100, 24);
+  const rateLimit = createRateLimiter(env);
 
-  app.use(cors());
+  app.use(cors(corsOptions(env)));
   app.use(express.json({ limit: "256kb" }));
 
   app.get("/api/health", (_req, res) => {
@@ -20,7 +106,7 @@ export function createApp(env = process.env) {
     });
   });
 
-  app.post("/api/generate-deck", async (req, res) => {
+  app.post("/api/generate-deck", rateLimit, async (req, res) => {
     try {
       const topics = compactTopics(req.body?.topics, maxTopics);
       if (!topics.length) {
@@ -29,6 +115,10 @@ export function createApp(env = process.env) {
 
       const rawOptions = req.body?.options ?? {};
       const requestApiKey = String(req.body?.apiKey || "").trim();
+      const accessError = verifyAccessToken(req, env, requestApiKey);
+      if (accessError) {
+        return res.status(accessError.status).json({ error: accessError.error });
+      }
       const options = {
         title: String(rawOptions.title || "").trim(),
         language: rawOptions.language === "anglais" ? "anglais" : "francais",
@@ -45,9 +135,10 @@ export function createApp(env = process.env) {
       const result = await generateDeckPipeline({ topics, options, env: requestEnv });
       res.json(result);
     } catch (error) {
-      const status = error.validation ? 422 : error.message.includes("OPENAI_API_KEY") ? 503 : 500;
+      const status = errorStatus(error);
       res.status(status).json({
         error: error.message,
+        code: error.code,
         details: error.validation?.errors,
       });
     }

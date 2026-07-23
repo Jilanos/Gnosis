@@ -27,6 +27,8 @@ Docker
 CI/CD
 observabilite`;
 
+const GENERATION_TIMEOUT_MS = 120_000;
+
 const LEVELS = [
   { value: "debutant", label: "Debutant" },
   { value: "intermediaire", label: "Intermediaire" },
@@ -184,10 +186,13 @@ function App() {
   async function generateDeck() {
     setCopied(false);
     setState({ status: "loading" });
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), GENERATION_TIMEOUT_MS);
     try {
       const response = await fetch("/api/generate-deck", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
         body: JSON.stringify({
           topics,
           options,
@@ -200,7 +205,13 @@ function App() {
       }
       setState({ status: "done", result: body });
     } catch (error) {
-      setState({ status: "error", error: error.message });
+      const message =
+        error.name === "AbortError"
+          ? "Generation interrompue: le delai maximal de 120 secondes est depasse."
+          : error.message;
+      setState({ status: "error", error: message });
+    } finally {
+      window.clearTimeout(timeout);
     }
   }
 

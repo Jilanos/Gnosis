@@ -11,11 +11,47 @@ import { createMockPipeline } from "./mock-pipeline.mjs";
 import { assertDeck, validateDeck, validationSummary } from "./validation.mjs";
 import { slugify, uniqueSlug } from "./utils.mjs";
 
+const DEFAULT_OPENAI_MODEL = "gpt-5.6";
+const DEFAULT_OPENAI_TIMEOUT_MS = 60_000;
+const DEFAULT_OPENAI_MAX_RETRIES = 1;
+const DEFAULT_MAX_OUTPUT_TOKENS = 12_000;
+const DEFAULT_DECK_BATCH_SIZE = 1;
+
 const SYSTEM_BASE = `Tu es Gnosis, un architecte pedagogique specialise dans les sujets techniques.
 Tu construis des decks Kapsule en francais par defaut.
 Tu privilegies la precision, les prerequis, les modes de defaillance, les exemples concrets et les quiz utiles.
 Tu ne dois pas inventer de proprietes hors schemas.
 Quand une information est incertaine, reste general et marque les limites dans le contenu pedagogique.`;
+
+export class PipelineError extends Error {
+  constructor(message, { code = "PIPELINE_ERROR", status = 500, cause } = {}) {
+    super(message, { cause });
+    this.name = "PipelineError";
+    this.code = code;
+    this.status = status;
+  }
+}
+
+function clampNumber(value, min, max, fallback) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.max(min, Math.min(Math.trunc(parsed), max));
+}
+
+export function resolveOpenAISettings(env = process.env) {
+  return {
+    model: env.OPENAI_MODEL || DEFAULT_OPENAI_MODEL,
+    timeout: clampNumber(env.OPENAI_TIMEOUT_MS, 5_000, 600_000, DEFAULT_OPENAI_TIMEOUT_MS),
+    maxRetries: clampNumber(env.OPENAI_MAX_RETRIES, 0, 5, DEFAULT_OPENAI_MAX_RETRIES),
+    maxOutputTokens: clampNumber(
+      env.OPENAI_MAX_OUTPUT_TOKENS,
+      1_000,
+      64_000,
+      DEFAULT_MAX_OUTPUT_TOKENS,
+    ),
+    deckBatchSize: clampNumber(env.OPENAI_DECK_BATCH_SIZE, 1, 6, DEFAULT_DECK_BATCH_SIZE),
+  };
+}
 
 function jsonFormat(name, schema) {
   return {
@@ -28,20 +64,62 @@ function jsonFormat(name, schema) {
   };
 }
 
-function parseOutput(response) {
+export function parseOutput(response) {
+  if (response?.status === "incomplete") {
+    throw new PipelineError(
+      `Reponse OpenAI tronquee: ${response.incomplete_details?.reason || "raison inconnue"}.`,
+      { code: "OPENAI_INCOMPLETE", status: 502 },
+    );
+  }
   const text = response.output_text;
-  if (!text) throw new Error("OpenAI n'a retourne aucun JSON exploitable.");
-  return JSON.parse(text);
+  if (!text) {
+    throw new PipelineError("OpenAI n'a retourne aucun JSON exploitable.", {
+      code: "OPENAI_EMPTY_OUTPUT",
+      status: 502,
+    });
+  }
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    throw new PipelineError("JSON OpenAI invalide ou tronque.", {
+      code: "OPENAI_INVALID_JSON",
+      status: 502,
+      cause: error,
+    });
+  }
 }
 
-async function callStructured(client, model, name, schema, input) {
-  const response = await client.responses.create({
-    model,
-    store: false,
-    input,
-    text: jsonFormat(name, schema),
+function classifyOpenAIError(error) {
+  const code = error?.code || error?.name || "";
+  const message = String(error?.message || "");
+  if (/timeout|timed out|ETIMEDOUT/i.test(`${code} ${message}`)) {
+    return new PipelineError("L'appel OpenAI a depasse le delai configure.", {
+      code: "OPENAI_TIMEOUT",
+      status: 504,
+      cause: error,
+    });
+  }
+  return new PipelineError("L'appel OpenAI a echoue.", {
+    code: "OPENAI_REQUEST_FAILED",
+    status: error?.status || 502,
+    cause: error,
   });
-  return parseOutput(response);
+}
+
+export async function callStructured(client, settings, name, schema, input, overrides = {}) {
+  try {
+    const response = await client.responses.create({
+      model: settings.model,
+      store: false,
+      input,
+      text: jsonFormat(name, schema),
+      max_output_tokens: overrides.maxOutputTokens || settings.maxOutputTokens,
+    });
+    return parseOutput(response);
+  } catch (error) {
+    if (error instanceof PipelineError) throw error;
+    throw classifyOpenAIError(error);
+  }
 }
 
 function pipelineSummary(normalized, families, expansion, plan, deck) {
@@ -92,8 +170,74 @@ Contraintes:
   return normalizeDeckIds(repaired);
 }
 
+function deckBatchSchema(batchSize) {
+  return {
+    ...deckOutputSchema,
+    properties: {
+      ...deckOutputSchema.properties,
+      cards: {
+        ...deckOutputSchema.properties.cards,
+        maxItems: batchSize,
+      },
+    },
+  };
+}
+
+async function generateDeckBatches(client, settings, plan, expansion) {
+  const batches = [];
+  for (let index = 0; index < plan.cards.length; index += settings.deckBatchSize) {
+    batches.push(plan.cards.slice(index, index + settings.deckBatchSize));
+  }
+
+  const deck = {
+    schemaVersion: 1,
+    id: plan.deckId,
+    title: plan.title,
+    description: plan.description,
+    tags: plan.tags,
+    cards: [],
+  };
+
+  for (const [index, batch] of batches.entries()) {
+    const partial = await callStructured(
+      client,
+      settings,
+      `kapsule_deck_batch_${index + 1}`,
+      deckBatchSchema(batch.length),
+      [
+        { role: "system", content: SYSTEM_BASE },
+        {
+          role: "user",
+          content: `Genere uniquement les fiches Kapsule du lot ${index + 1}/${batches.length}.
+Retourne un deck JSON valide contenant seulement les fiches demandees dans cards.
+Respecte strictement:
+- schemaVersion: 1
+- sections autorisees: intro, concept, example, takeaways, quiz
+- chaque fiche finit par un quiz
+- aucune propriete additionnelle
+- Markdown leger uniquement dans content
+- fiches precises et concretes, sans volume inutile
+- durationMin doit correspondre au volume reel: ceil(mots / 190) + ceil(nb_questions / 2)
+
+Metadonnees du deck:
+${JSON.stringify({ id: plan.deckId, title: plan.title, description: plan.description, tags: plan.tags }, null, 2)}
+
+Fiches a generer:
+${JSON.stringify(batch, null, 2)}
+
+Expansion:
+${JSON.stringify(expansion, null, 2)}`,
+        },
+      ],
+    );
+    deck.cards.push(...(partial.cards || []));
+  }
+
+  return normalizeDeckIds(deck);
+}
+
 export async function generateDeckPipeline({ topics, options = {}, env = process.env }) {
-  const model = env.OPENAI_MODEL || "gpt-5.6";
+  const settings = resolveOpenAISettings(env);
   const useMock = env.GNOSIS_MOCK_OPENAI === "1" || env.NODE_ENV === "test";
 
   if (useMock) {
@@ -110,10 +254,17 @@ export async function generateDeckPipeline({ topics, options = {}, env = process
   }
 
   if (!env.OPENAI_API_KEY) {
-    throw new Error("OPENAI_API_KEY est manquante cote serveur.");
+    throw new PipelineError("OPENAI_API_KEY est manquante cote serveur.", {
+      code: "OPENAI_API_KEY_MISSING",
+      status: 503,
+    });
   }
 
-  const client = new OpenAI({ apiKey: env.OPENAI_API_KEY });
+  const client = new OpenAI({
+    apiKey: env.OPENAI_API_KEY,
+    timeout: settings.timeout,
+    maxRetries: settings.maxRetries,
+  });
   const context = {
     topics,
     options,
@@ -127,7 +278,7 @@ export async function generateDeckPipeline({ topics, options = {}, env = process
     },
   };
 
-  const normalized = await callStructured(client, model, "gnosis_normalized_topics", normalizedSchema, [
+  const normalized = await callStructured(client, settings, "gnosis_normalized_topics", normalizedSchema, [
     { role: "system", content: SYSTEM_BASE },
     {
       role: "user",
@@ -137,7 +288,7 @@ ${JSON.stringify(context, null, 2)}`,
     },
   ]);
 
-  const families = await callStructured(client, model, "gnosis_topic_families", familiesSchema, [
+  const families = await callStructured(client, settings, "gnosis_topic_families", familiesSchema, [
     { role: "system", content: SYSTEM_BASE },
     {
       role: "user",
@@ -149,7 +300,7 @@ ${JSON.stringify(options, null, 2)}`,
     },
   ]);
 
-  const expansion = await callStructured(client, model, "gnosis_family_expansion", expansionSchema, [
+  const expansion = await callStructured(client, settings, "gnosis_family_expansion", expansionSchema, [
     { role: "system", content: SYSTEM_BASE },
     {
       role: "user",
@@ -162,7 +313,7 @@ ${JSON.stringify(normalized, null, 2)}`,
     },
   ]);
 
-  const plan = await callStructured(client, model, "gnosis_deck_plan", planSchema, [
+  const plan = await callStructured(client, settings, "gnosis_deck_plan", planSchema, [
     { role: "system", content: SYSTEM_BASE },
     {
       role: "user",
@@ -175,39 +326,20 @@ ${JSON.stringify({ normalized, families, expansion, options }, null, 2)}`,
     },
   ]);
 
-  const deck = normalizeDeckIds(
-    await callStructured(client, model, "kapsule_deck", deckOutputSchema, [
-      { role: "system", content: SYSTEM_BASE },
-      {
-        role: "user",
-        content: `Genere le deck final au format Kapsule JSON.
-Respecte strictement:
-- schemaVersion: 1
-- sections autorisees: intro, concept, example, takeaways, quiz
-- chaque fiche finit par un quiz
-- aucune propriete additionnelle
-- Markdown leger uniquement dans content
-- fiches denses, precises, concretes, avec exemples et pieges
-- durationMin doit correspondre au volume reel: ceil(mots / 190) + ceil(nb_questions / 2)
-
-Plan:
-${JSON.stringify(plan, null, 2)}
-
-Expansion:
-${JSON.stringify(expansion, null, 2)}`,
-      },
-    ]),
-  );
+  const deck = await generateDeckBatches(client, settings, plan, expansion);
 
   let validation = validateDeck(deck);
   let finalDeck = deck;
   if (!validation.valid) {
-    finalDeck = await repairDeck(client, model, deck, validation);
+    finalDeck = await repairDeck(client, settings, deck, validation);
     validation = validateDeck(finalDeck);
   }
 
   if (!validation.valid) {
-    const error = new Error("Le deck genere reste invalide apres reparation.");
+    const error = new PipelineError("Le deck genere reste invalide apres reparation.", {
+      code: "KAPSULE_VALIDATION_FAILED",
+      status: 422,
+    });
     error.validation = validation;
     throw error;
   }
@@ -221,6 +353,6 @@ ${JSON.stringify(expansion, null, 2)}`,
     validation,
     pipeline: pipelineSummary(normalized, families, expansion, plan, finalDeck),
     metrics: estimateDeckMetrics(finalDeck),
-    model,
+    model: settings.model,
   };
 }

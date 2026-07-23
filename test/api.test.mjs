@@ -46,3 +46,42 @@ test("GET /api/health reports whether a server API key is configured", async () 
   assert.equal(response.body.ok, true);
   assert.equal(response.body.hasServerApiKey, true);
 });
+
+test("POST /api/generate-deck protects the server OpenAI key in production", async () => {
+  const app = createApp({
+    NODE_ENV: "production",
+    GNOSIS_MOCK_OPENAI: "1",
+    OPENAI_API_KEY: "sk-server-key",
+  });
+
+  const response = await request(app)
+    .post("/api/generate-deck")
+    .send({
+      topics: ["DNS", "TCP"],
+      options: { targetCards: 2 },
+    })
+    .expect(503);
+
+  assert.match(response.body.error, /GNOSIS_ACCESS_TOKEN/);
+});
+
+test("POST /api/generate-deck accepts the configured access token in production", async () => {
+  const app = createApp({
+    NODE_ENV: "production",
+    GNOSIS_MOCK_OPENAI: "1",
+    OPENAI_API_KEY: "sk-server-key",
+    GNOSIS_ACCESS_TOKEN: "local-secret",
+  });
+
+  const response = await request(app)
+    .post("/api/generate-deck")
+    .set("x-gnosis-access-token", "local-secret")
+    .send({
+      topics: ["DNS", "TCP"],
+      options: { targetCards: 2 },
+    })
+    .expect(200);
+
+  assert.equal(response.body.validation.valid, true);
+  assert.equal(response.body.model, "mock");
+});
