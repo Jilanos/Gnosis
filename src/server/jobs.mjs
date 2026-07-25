@@ -13,18 +13,23 @@ function numberSetting(value, fallback, min, max) {
 
 export function createJobManager(env = process.env) {
   const file = path.resolve(env.GNOSIS_JOBS_FILE || "data/gnosis-jobs.json");
+  const persistent = env.NODE_ENV !== "test";
   const maxRunning = numberSetting(env.GNOSIS_MAX_RUNNING_JOBS, DEFAULT_MAX_RUNNING, 1, 8);
   const maxQueue = numberSetting(env.GNOSIS_MAX_QUEUED_JOBS, DEFAULT_MAX_QUEUE, 0, 100);
   const jobs = new Map();
   let running = 0;
 
   async function persist() {
+    if (!persistent) return;
     await fs.mkdir(path.dirname(file), { recursive: true });
     const snapshot = [...jobs.values()].map(({ controller, requestEnv, ...job }) => job);
-    await fs.writeFile(file, JSON.stringify(snapshot, null, 2));
+    const temporary = `${file}.${process.pid}.tmp`;
+    await fs.writeFile(temporary, JSON.stringify(snapshot, null, 2));
+    await fs.rename(temporary, file);
   }
 
   async function restore() {
+    if (!persistent) return;
     try {
       const saved = JSON.parse(await fs.readFile(file, "utf8"));
       for (const job of saved) {
