@@ -1,5 +1,6 @@
 import cors from "cors";
 import express from "express";
+import path from "node:path";
 import { generateDeckPipeline } from "./openai-pipeline.mjs";
 import { clampInteger, compactTopics } from "./utils.mjs";
 
@@ -96,6 +97,14 @@ export function createApp(env = process.env) {
 
   app.use(cors(corsOptions(env)));
   app.use(express.json({ limit: "256kb" }));
+
+  const staticDir = String(env.STATIC_DIR || "").trim();
+  if (staticDir) {
+    app.use(express.static(staticDir, { index: "index.html" }));
+    app.get(/^(?!\/api(?:\/|$)).*/, (_req, res) => {
+      res.sendFile(path.join(staticDir, "index.html"));
+    });
+  }
 
   app.get("/api/health", (_req, res) => {
     res.json({

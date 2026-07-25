@@ -1,5 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import request from "supertest";
 import { createApp } from "../src/server/app.mjs";
 
@@ -25,6 +28,15 @@ test("POST /api/generate-deck returns a valid deck in mock mode", async () => {
   assert.equal(response.body.metrics.cards.length, 2);
   assert.equal(response.body.deck.cards[0].durationMin, response.body.metrics.cards[0].schemaDurationMin);
   assert.equal(JSON.stringify(response.body).includes("sk-test-not-a-real-key"), false);
+});
+
+test("production app serves the Vite shell while keeping the API routes", async () => {
+  const staticDir = await fs.mkdtemp(path.join(os.tmpdir(), "gnosis-static-"));
+  await fs.writeFile(path.join(staticDir, "index.html"), "<html>gnosis-shell</html>");
+  const app = createApp({ STATIC_DIR: staticDir });
+
+  const response = await request(app).get("/").expect(200);
+  assert.match(response.text, /gnosis-shell/);
 });
 
 test("POST /api/generate-deck rejects empty input", async () => {
