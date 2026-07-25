@@ -75,3 +75,14 @@ La slice MVP applicative est dans :
 - `req_001_construire_le_mvp_applicatif_gnosis`
 - `item_002_construire_le_mvp_applicatif_gnosis`
 - `task_002_construire_le_mvp_applicatif_gnosis`
+## Generation asynchrone et acces
+
+La generation est un job persistant : `POST /api/generate-deck` renvoie `202` avec un identifiant,
+`GET /api/generate-deck/:id` expose l'etat et `DELETE /api/generate-deck/:id` annule un job en cours.
+Les jobs sont stockes dans `GNOSIS_JOBS_FILE` (par defaut `data/gnosis-jobs.json`) et la capacite est
+bornee par `GNOSIS_MAX_RUNNING_JOBS` et `GNOSIS_MAX_QUEUED_JOBS`. Le serveur propage l'annulation aux
+appels OpenAI. En production, configure `GNOSIS_ACCESS_TOKEN`; l'interface transmet ce jeton dans
+`x-gnosis-access-token` sans jamais exposer `OPENAI_API_KEY`.
+
+`GNOSIS_TRUST_PROXY` doit correspondre au nombre de proxies Caddy effectivement controles. La CI PR
+execute tests, build, validation de fixture et audit npm avant merge.

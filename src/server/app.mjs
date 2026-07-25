@@ -1,7 +1,7 @@
 import cors from "cors";
 import express from "express";
 import path from "node:path";
-import { generateDeckPipeline } from "./openai-pipeline.mjs";
+import { createJobManager } from "./jobs.mjs";
 import { clampInteger, compactTopics } from "./utils.mjs";
 
 const DEFAULT_RATE_LIMIT_WINDOW_MS = 60_000;
@@ -41,9 +41,16 @@ function createRateLimiter(env) {
   );
   const maxRequests = clampInteger(env.RATE_LIMIT_MAX, 1, 1_000, DEFAULT_RATE_LIMIT_MAX);
   const buckets = new Map();
+  let lastCleanup = 0;
 
   return function rateLimit(req, res, next) {
     const now = Date.now();
+    if (now - lastCleanup > windowMs) {
+      for (const [key, bucket] of buckets) {
+        if (bucket.resetAt <= now) buckets.delete(key);
+      }
+      lastCleanup = now;
+    }
     const key = req.ip || req.socket?.remoteAddress || "unknown";
     const current = buckets.get(key);
     if (!current || current.resetAt <= now) {
@@ -91,12 +98,22 @@ function errorStatus(error) {
 
 export function createApp(env = process.env) {
   const app = express();
+  const trustedProxy = Number(env.GNOSIS_TRUST_PROXY || 0);
+  if (Number.isInteger(trustedProxy) && trustedProxy > 0) app.set("trust proxy", trustedProxy);
   const maxTopics = clampInteger(env.MAX_INPUT_TOPICS, 1, 200, 80);
   const maxCards = clampInteger(env.MAX_CARDS, 2, 100, 24);
   const rateLimit = createRateLimiter(env);
+  const jobs = createJobManager(env);
 
   app.use(cors(corsOptions(env)));
   app.use(express.json({ limit: "256kb" }));
+  app.use((_req, res, next) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    res.setHeader("Content-Security-Policy", "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; script-src 'self'; connect-src 'self'; frame-ancestors 'none'");
+    next();
+  });
 
   const staticDir = String(env.STATIC_DIR || "").trim();
   if (staticDir) {
@@ -141,8 +158,8 @@ export function createApp(env = process.env) {
       };
 
       const requestEnv = requestApiKey ? { ...env, OPENAI_API_KEY: requestApiKey } : env;
-      const result = await generateDeckPipeline({ topics, options, env: requestEnv });
-      res.json(result);
+      const job = await jobs.create({ topics, options, requestEnv });
+      res.status(202).json(job);
     } catch (error) {
       const status = errorStatus(error);
       res.status(status).json({
@@ -152,6 +169,20 @@ export function createApp(env = process.env) {
       });
     }
   });
+
+  app.get("/api/generate-deck/:id", (req, res) => {
+    const job = jobs.get(req.params.id);
+    if (!job) return res.status(404).json({ error: "Job introuvable." });
+    return res.json(job);
+  });
+
+  app.delete("/api/generate-deck/:id", async (req, res) => {
+    const job = await jobs.cancel(req.params.id);
+    if (!job) return res.status(404).json({ error: "Job introuvable." });
+    return res.json(job);
+  });
+
+  void jobs.init();
 
   return app;
 }

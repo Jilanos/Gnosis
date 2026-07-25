@@ -27,7 +27,7 @@ Docker
 CI/CD
 observabilite`;
 
-const GENERATION_TIMEOUT_MS = 120_000;
+const GENERATION_TIMEOUT_MS = 180_000;
 
 const LEVELS = [
   { value: "debutant", label: "Debutant" },
@@ -174,6 +174,7 @@ function App() {
     targetCards: 8,
   });
   const [apiKey, setApiKey] = React.useState("");
+  const [accessToken, setAccessToken] = React.useState("");
   const [state, setState] = React.useState({ status: "idle" });
   const [copied, setCopied] = React.useState(false);
 
@@ -187,12 +188,16 @@ function App() {
     setCopied(false);
     setState({ status: "loading" });
     const controller = new AbortController();
+    let jobId;
     const timeout = window.setTimeout(() => controller.abort(), GENERATION_TIMEOUT_MS);
     try {
       const response = await fetch("/api/generate-deck", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         signal: controller.signal,
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken.trim() ? { "x-gnosis-access-token": accessToken.trim() } : {}),
+        },
         body: JSON.stringify({
           topics,
           options,
@@ -203,12 +208,24 @@ function App() {
       if (!response.ok) {
         throw new Error(body.error || "Generation impossible.");
       }
-      setState({ status: "done", result: body });
+      jobId = body.id;
+      while (true) {
+        await new Promise((resolve) => window.setTimeout(resolve, 700));
+        const jobResponse = await fetch(`/api/generate-deck/${jobId}`, { signal: controller.signal });
+        const job = await jobResponse.json();
+        setState({ status: job.status === "completed" ? "loading" : "loading", job });
+        if (job.status === "completed") {
+          setState({ status: "done", result: job.result });
+          break;
+        }
+        if (["failed", "cancelled"].includes(job.status)) throw new Error(job.error || "Generation annulee.");
+      }
     } catch (error) {
       const message =
         error.name === "AbortError"
           ? "Generation interrompue: le delai maximal de 120 secondes est depasse."
           : error.message;
+      if (error.name === "AbortError" && jobId) await fetch(`/api/generate-deck/${jobId}`, { method: "DELETE" });
       setState({ status: "error", error: message });
     } finally {
       window.clearTimeout(timeout);
@@ -396,6 +413,20 @@ function App() {
                   />
                 </div>
               </label>
+
+              <label className="field" style={{ marginBottom: 0 }}>
+                <span className="flabel">Jeton d'acces serveur</span>
+                <div className="input-icon">
+                  <KeyRound size={15} />
+                  <input
+                    type="password"
+                    value={accessToken}
+                    placeholder="GNOSIS_ACCESS_TOKEN"
+                    autoComplete="off"
+                    onChange={(event) => setAccessToken(event.target.value)}
+                  />
+                </div>
+              </label>
             </div>
 
             <div className="control-foot">
@@ -445,7 +476,7 @@ function App() {
 
             <div className="scroll">
               {state.status === "idle" && <EmptyState />}
-              {state.status === "loading" && <LoadingState />}
+              {state.status === "loading" && <LoadingState job={state.job} />}
               {state.status === "error" && <ErrorState message={state.error} />}
               {state.status === "done" && (
                 <DeckResult
@@ -478,12 +509,13 @@ function EmptyState() {
   );
 }
 
-function LoadingState() {
+function LoadingState({ job }) {
   const steps = ["Normalisation", "Familles", "Expansion", "Plan", "Fiches", "Validation"];
   return (
     <div className="state">
       <Loader2 className="spin" size={32} />
       <h3>Generation en cours</h3>
+      {job && <p>{job.stage || "En file"} · {job.progress || 0}%</p>}
       <div className="step-list">
         {steps.map((step) => (
           <span key={step}>{step}</span>

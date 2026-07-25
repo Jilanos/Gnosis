@@ -114,6 +114,7 @@ export async function callStructured(client, settings, name, schema, input, over
       input,
       text: jsonFormat(name, schema),
       max_output_tokens: overrides.maxOutputTokens || settings.maxOutputTokens,
+      signal: overrides.signal,
     });
     return parseOutput(response);
   } catch (error) {
@@ -147,7 +148,7 @@ function normalizeDeckIds(deck) {
   return applyCalculatedDurations(deck);
 }
 
-async function repairDeck(client, model, deck, validation) {
+async function repairDeck(client, model, deck, validation, signal) {
   const repaired = await callStructured(client, model, "kapsule_deck_repair", deckOutputSchema, [
     { role: "system", content: SYSTEM_BASE },
     {
@@ -166,7 +167,7 @@ Contraintes:
 - Aucune propriete additionnelle.
 - quiz.answer est un index base 0 valide.`,
     },
-  ]);
+  ], { signal });
   return normalizeDeckIds(repaired);
 }
 
@@ -183,7 +184,7 @@ function deckBatchSchema(batchSize) {
   };
 }
 
-async function generateDeckBatches(client, settings, plan, expansion) {
+async function generateDeckBatches(client, settings, plan, expansion, signal, onProgress) {
   const batches = [];
   for (let index = 0; index < plan.cards.length; index += settings.deckBatchSize) {
     batches.push(plan.cards.slice(index, index + settings.deckBatchSize));
@@ -199,6 +200,7 @@ async function generateDeckBatches(client, settings, plan, expansion) {
   };
 
   for (const [index, batch] of batches.entries()) {
+    onProgress?.("Fiches", Math.round((index / batches.length) * 70) + 20);
     const partial = await callStructured(
       client,
       settings,
@@ -229,6 +231,7 @@ Expansion:
 ${JSON.stringify(expansion, null, 2)}`,
         },
       ],
+      { signal },
     );
     deck.cards.push(...(partial.cards || []));
   }
@@ -236,7 +239,7 @@ ${JSON.stringify(expansion, null, 2)}`,
   return normalizeDeckIds(deck);
 }
 
-export async function generateDeckPipeline({ topics, options = {}, env = process.env }) {
+export async function generateDeckPipeline({ topics, options = {}, env = process.env, signal, onProgress }) {
   const settings = resolveOpenAISettings(env);
   const useMock = env.GNOSIS_MOCK_OPENAI === "1" || env.NODE_ENV === "test";
 
@@ -278,6 +281,7 @@ export async function generateDeckPipeline({ topics, options = {}, env = process
     },
   };
 
+  onProgress?.("Normalisation", 5);
   const normalized = await callStructured(client, settings, "gnosis_normalized_topics", normalizedSchema, [
     { role: "system", content: SYSTEM_BASE },
     {
@@ -286,8 +290,9 @@ export async function generateDeckPipeline({ topics, options = {}, env = process
 Contexte:
 ${JSON.stringify(context, null, 2)}`,
     },
-  ]);
+  ], { signal });
 
+  onProgress?.("Familles", 15);
   const families = await callStructured(client, settings, "gnosis_topic_families", familiesSchema, [
     { role: "system", content: SYSTEM_BASE },
     {
@@ -298,8 +303,9 @@ ${JSON.stringify(normalized, null, 2)}
 Options:
 ${JSON.stringify(options, null, 2)}`,
     },
-  ]);
+  ], { signal });
 
+  onProgress?.("Expansion", 25);
   const expansion = await callStructured(client, settings, "gnosis_family_expansion", expansionSchema, [
     { role: "system", content: SYSTEM_BASE },
     {
@@ -311,8 +317,9 @@ ${JSON.stringify(families, null, 2)}
 Sujets normalises:
 ${JSON.stringify(normalized, null, 2)}`,
     },
-  ]);
+  ], { signal });
 
+  onProgress?.("Plan", 35);
   const plan = await callStructured(client, settings, "gnosis_deck_plan", planSchema, [
     { role: "system", content: SYSTEM_BASE },
     {
@@ -324,14 +331,14 @@ La duree finale sera calculee depuis le volume reel: ceil(mots / 190) + ceil(nb_
 Entree:
 ${JSON.stringify({ normalized, families, expansion, options }, null, 2)}`,
     },
-  ]);
+  ], { signal });
 
-  const deck = await generateDeckBatches(client, settings, plan, expansion);
+  const deck = await generateDeckBatches(client, settings, plan, expansion, signal, onProgress);
 
   let validation = validateDeck(deck);
   let finalDeck = deck;
   if (!validation.valid) {
-    finalDeck = await repairDeck(client, settings, deck, validation);
+    finalDeck = await repairDeck(client, settings, deck, validation, signal);
     validation = validateDeck(finalDeck);
   }
 

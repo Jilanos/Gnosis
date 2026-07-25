@@ -21,12 +21,18 @@ test("POST /api/generate-deck returns a valid deck in mock mode", async () => {
       options: { title: "Reseaux essentiels", targetCards: 2 },
       apiKey: "sk-test-not-a-real-key",
     })
-    .expect(200);
+    .expect(202);
 
-  assert.equal(response.body.validation.valid, true);
-  assert.equal(response.body.deck.cards.length, 2);
-  assert.equal(response.body.metrics.cards.length, 2);
-  assert.equal(response.body.deck.cards[0].durationMin, response.body.metrics.cards[0].schemaDurationMin);
+  let job = response.body;
+  for (let attempt = 0; attempt < 20 && job.status !== "completed"; attempt += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    job = (await request(app).get(`/api/generate-deck/${job.id}`)).body;
+  }
+  assert.equal(job.status, "completed");
+  assert.equal(job.result.validation.valid, true);
+  assert.equal(job.result.deck.cards.length, 2);
+  assert.equal(job.result.metrics.cards.length, 2);
+  assert.equal(job.result.deck.cards[0].durationMin, job.result.metrics.cards[0].schemaDurationMin);
   assert.equal(JSON.stringify(response.body).includes("sk-test-not-a-real-key"), false);
 });
 
@@ -92,8 +98,7 @@ test("POST /api/generate-deck accepts the configured access token in production"
       topics: ["DNS", "TCP"],
       options: { targetCards: 2 },
     })
-    .expect(200);
+    .expect(202);
 
-  assert.equal(response.body.validation.valid, true);
-  assert.equal(response.body.model, "mock");
+  assert.ok(["queued", "running"].includes(response.body.status));
 });
