@@ -1,10 +1,10 @@
 ## item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle - Integrer Gnosis a l identite commune et a la resolution de cle
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 85%
+> Progress: 100%
 > Complexity: High
 > Theme: Authentification et autorisation Gnosis
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
@@ -36,6 +36,9 @@
 - request-AC4 -> This backlog slice. Proof: AC3: Les jobs ne divulguent ni la cle ni les donnees d'un autre proprietaire et les tests couvrent les acces croises.
 - request-AC5 -> This backlog slice. Proof: AC4: Aucun navigateur n'a besoin de connaitre GNOSIS_ACCESS_TOKEN.
 - request-AC6 -> This backlog slice. Proof: AC4: Aucun navigateur n'a besoin de connaitre GNOSIS_ACCESS_TOKEN.
+- request-AC7 -> This backlog slice. Evidence needed: L'en-tete de Gnosis affiche v<version de package.json> et contient un lien accessible vers https://paulmondou.fr/.
+- request-AC8 -> This backlog slice. Evidence needed: La livraison contient un commit Logics, un commit d'implementation, une preparation SemVer, un commit de release, un push, une CI verte, un tag et une release correspondant exactement a la version publiee.
+- request-AC9 -> This backlog slice. Evidence needed: Apres release, le deploiement est verifie par healthcheck, parcours de connexion et generation controlee, et son resultat est consigne.
 
 # Decision framing
 - Product framing: Not needed
@@ -56,3 +59,9 @@
 # Priority
 - Priority: High
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_005_orchestrer_l_identite_commune_et_la_release_gnosis`
+
+# Notes
+- Task `task_005_orchestrer_l_identite_commune_et_la_release_gnosis` was finished via `logics-manager flow finish task` on 2026-07-26.

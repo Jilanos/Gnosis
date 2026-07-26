@@ -1,7 +1,7 @@
 ## req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage - Federer Gnosis aux comptes communs et au coffre OpenAI partage
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Draft
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: High
