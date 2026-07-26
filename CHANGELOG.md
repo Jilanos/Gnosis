@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 - 2026-07-26
+
+- Install the native build toolchain required by `better-sqlite3` in the Docker build stage.
+
 ## 1.1.0 - 2026-07-26
 
 - Federation with shared Kapsule and ClaimLens accounts.

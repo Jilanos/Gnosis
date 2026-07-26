@@ -2,7 +2,10 @@ FROM node:20-bookworm-slim AS build
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends python3 make g++ \
+    && npm ci \
+    && rm -rf /var/lib/apt/lists/*
 COPY . .
 RUN npm run build
 RUN npm prune --omit=dev
