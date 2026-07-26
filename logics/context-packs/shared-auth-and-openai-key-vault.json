@@ -1,0 +1,312 @@
+{
+  "budgets": {
+    "max_docs": 24,
+    "max_docs_per_ref": 4
+  },
+  "changed_paths": [],
+  "command": "logics-manager sync context-pack req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation item_010_preparer_publier_et_verifier_la_release_gnosis task_005_orchestrer_l_identite_commune_et_la_release_gnosis --mode summary-only --profile normal --handoff",
+  "companion_docs": [
+    {
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule",
+          "item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle",
+          "item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation",
+          "item_010_preparer_publier_et_verifier_la_release_gnosis"
+        ],
+        "prod": [
+          "prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable"
+        ],
+        "req": [
+          "req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage"
+        ],
+        "task": [
+          "task_005_orchestrer_l_identite_commune_et_la_release_gnosis"
+        ]
+      },
+      "path": "logics/product/prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable.md",
+      "ref": "prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable",
+      "status": "Proposed",
+      "title": "Gnosis avec identite commune et cle OpenAI reutilisable"
+    }
+  ],
+  "docs": [
+    {
+      "ai_context": {
+        "keywords": "request-chain-scaffold, federer gnosis aux comptes communs et au coffre openai partage, development-ready",
+        "skip when": "The change is unrelated to this scaffolded request chain.",
+        "summary": "Federer Gnosis aux comptes communs et au coffre OpenAI partage",
+        "use when": "You need to implement or review the scaffolded workflow for Federer Gnosis aux comptes communs et au coffre OpenAI partage."
+      },
+      "kind": "request",
+      "linked_refs": {
+        "item": [
+          "item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule",
+          "item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle",
+          "item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation",
+          "item_010_preparer_publier_et_verifier_la_release_gnosis"
+        ],
+        "prod": [
+          "prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable"
+        ],
+        "req": [
+          "req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage"
+        ]
+      },
+      "path": "logics/request/req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage.md",
+      "ref": "req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage",
+      "schema_version": "1.0",
+      "status": "Draft",
+      "title": "Federer Gnosis aux comptes communs et au coffre OpenAI partage"
+    },
+    {
+      "ai_context": {
+        "keywords": "scaffolded-backlog, definir et migrer le coffre openai commun aux comptes kapsule, implementation-ready",
+        "skip when": "The change belongs to another backlog slice.",
+        "summary": "Definir et migrer le coffre OpenAI commun aux comptes Kapsule",
+        "use when": "Implementing the scaffolded slice for Definir et migrer le coffre OpenAI commun aux comptes Kapsule."
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule"
+        ],
+        "prod": [
+          "prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable"
+        ],
+        "req": [
+          "req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage"
+        ],
+        "task": [
+          "task_005_orchestrer_l_identite_commune_et_la_release_gnosis"
+        ]
+      },
+      "path": "logics/backlog/item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule.md",
+      "ref": "item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule",
+      "schema_version": "1.0",
+      "status": "Ready",
+      "title": "Definir et migrer le coffre OpenAI commun aux comptes Kapsule"
+    },
+    {
+      "ai_context": {
+        "keywords": "scaffolded-backlog, integrer gnosis a l identite commune et a la resolution de cle, implementation-ready",
+        "skip when": "The change belongs to another backlog slice.",
+        "summary": "Integrer Gnosis a l identite commune et a la resolution de cle",
+        "use when": "Implementing the scaffolded slice for Integrer Gnosis a l identite commune et a la resolution de cle."
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle"
+        ],
+        "prod": [
+          "prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable"
+        ],
+        "req": [
+          "req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage"
+        ],
+        "task": [
+          "task_005_orchestrer_l_identite_commune_et_la_release_gnosis"
+        ]
+      },
+      "path": "logics/backlog/item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle.md",
+      "ref": "item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle",
+      "schema_version": "1.0",
+      "status": "Ready",
+      "title": "Integrer Gnosis a l identite commune et a la resolution de cle"
+    },
+    {
+      "ai_context": {
+        "keywords": "scaffolded-backlog, adapter l interface gnosis pour la cle, la version et la navigation, implementation-ready",
+        "skip when": "The change belongs to another backlog slice.",
+        "summary": "Adapter l interface Gnosis pour la cle, la version et la navigation",
+        "use when": "Implementing the scaffolded slice for Adapter l interface Gnosis pour la cle, la version et la navigation."
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation"
+        ],
+        "prod": [
+          "prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable"
+        ],
+        "req": [
+          "req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage"
+        ],
+        "task": [
+          "task_005_orchestrer_l_identite_commune_et_la_release_gnosis"
+        ]
+      },
+      "path": "logics/backlog/item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation.md",
+      "ref": "item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation",
+      "schema_version": "1.0",
+      "status": "Ready",
+      "title": "Adapter l interface Gnosis pour la cle, la version et la navigation"
+    },
+    {
+      "ai_context": {
+        "keywords": "scaffolded-task, request-chain-scaffold, orchestration",
+        "skip when": "Working on one isolated sibling slice.",
+        "summary": "Orchestrer l identite commune et la release Gnosis",
+        "use when": "Coordinating implementation of a scaffolded request chain."
+      },
+      "kind": "task",
+      "linked_refs": {
+        "item": [
+          "item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule",
+          "item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle",
+          "item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation",
+          "item_010_preparer_publier_et_verifier_la_release_gnosis"
+        ],
+        "prod": [
+          "prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable"
+        ],
+        "req": [
+          "req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage"
+        ],
+        "task": [
+          "task_005_orchestrer_l_identite_commune_et_la_release_gnosis"
+        ]
+      },
+      "path": "logics/tasks/task_005_orchestrer_l_identite_commune_et_la_release_gnosis.md",
+      "ref": "task_005_orchestrer_l_identite_commune_et_la_release_gnosis",
+      "schema_version": "1.0",
+      "status": "Ready",
+      "title": "Orchestrer l identite commune et la release Gnosis"
+    },
+    {
+      "ai_context": {},
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule",
+          "item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle",
+          "item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation",
+          "item_010_preparer_publier_et_verifier_la_release_gnosis"
+        ],
+        "prod": [
+          "prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable"
+        ],
+        "req": [
+          "req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage"
+        ],
+        "task": [
+          "task_005_orchestrer_l_identite_commune_et_la_release_gnosis"
+        ]
+      },
+      "path": "logics/product/prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable.md",
+      "ref": "prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable",
+      "schema_version": "1.0",
+      "status": "Proposed",
+      "title": "Gnosis avec identite commune et cle OpenAI reutilisable"
+    },
+    {
+      "ai_context": {
+        "keywords": "scaffolded-backlog, preparer, publier et verifier la release gnosis, implementation-ready",
+        "skip when": "The change belongs to another backlog slice.",
+        "summary": "Preparer, publier et verifier la release Gnosis",
+        "use when": "Implementing the scaffolded slice for Preparer, publier et verifier la release Gnosis."
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_010_preparer_publier_et_verifier_la_release_gnosis"
+        ],
+        "prod": [
+          "prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable"
+        ],
+        "req": [
+          "req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage"
+        ],
+        "task": [
+          "task_005_orchestrer_l_identite_commune_et_la_release_gnosis"
+        ]
+      },
+      "path": "logics/backlog/item_010_preparer_publier_et_verifier_la_release_gnosis.md",
+      "ref": "item_010_preparer_publier_et_verifier_la_release_gnosis",
+      "schema_version": "1.0",
+      "status": "Ready",
+      "title": "Preparer, publier et verifier la release Gnosis"
+    }
+  ],
+  "estimates": {
+    "char_count": 8133,
+    "companion_doc_count": 1,
+    "doc_count": 7
+  },
+  "generated_at": "2026-07-26T09:17:43Z",
+  "handoff": {
+    "companion_doc_count": 1,
+    "enabled": true,
+    "source_refs": [
+      "req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage",
+      "item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule",
+      "item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle",
+      "item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation",
+      "item_010_preparer_publier_et_verifier_la_release_gnosis",
+      "task_005_orchestrer_l_identite_commune_et_la_release_gnosis"
+    ],
+    "validation_summary_count": 1
+  },
+  "i18n": {
+    "actions": [
+      "Choose the source locale for app-owned user-facing copy.",
+      "Run logics-manager i18n init --source-locale <locale>.",
+      "Route new UI copy through stable semantic keys."
+    ],
+    "applicable": null,
+    "configured": false,
+    "contract_path": "logics/i18n/contract.json",
+    "findings": [],
+    "next_action": "Run logics-manager i18n init --source-locale <locale> for a project that owns user-facing copy.",
+    "ok": true,
+    "state": "absent"
+  },
+  "mode": "summary-only",
+  "profile": "normal",
+  "ref": "req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage,item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule,item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle,item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation,item_010_preparer_publier_et_verifier_la_release_gnosis,task_005_orchestrer_l_identite_commune_et_la_release_gnosis",
+  "refs": [
+    "req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage",
+    "item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule",
+    "item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle",
+    "item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation",
+    "item_010_preparer_publier_et_verifier_la_release_gnosis",
+    "task_005_orchestrer_l_identite_commune_et_la_release_gnosis"
+  ],
+  "release": {
+    "blocking_reasons": [
+      "Missing logics/release/contract.json."
+    ],
+    "configured": false,
+    "contract_path": "logics/release/contract.json",
+    "guidance": [
+      "Release readiness must come from project-owned evidence, not conversational memory.",
+      "Use release status or validate before preparing or claiming release readiness.",
+      "Publication-oriented actions are explicit operator actions and are separate from safe read/validate actions."
+    ],
+    "next_action": "Run logics-manager release discover --write, then review and promote logics/release/contract.draft.json to logics/release/contract.json.",
+    "publication_actions": [
+      "GitHub release publication",
+      "external publication"
+    ],
+    "required_gates": [],
+    "safe_actions": [
+      "logics-manager release status",
+      "logics-manager release plan <version>",
+      "logics-manager release validate <version>"
+    ],
+    "state": "not_configured",
+    "target_version": null
+  },
+  "validation_summary": [
+    {
+      "items": [
+        "- Run `python3 -m logics_manager lint --require-status`.",
+        "- Run scaffold command tests."
+      ],
+      "path": "logics/tasks/task_005_orchestrer_l_identite_commune_et_la_release_gnosis.md",
+      "ref": "task_005_orchestrer_l_identite_commune_et_la_release_gnosis"
+    }
+  ]
+}

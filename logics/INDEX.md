@@ -12,6 +12,7 @@
 |---|---|---|---|---|---|
 | [prod_001_gnosis_product_brief](product/prod_001_gnosis_product_brief.md) | Gnosis product brief | Proposed |  |  | product/prod_001_gnosis_product_brief.md |
 | [prod_002_fiabilisation_de_la_generation_gnosis](product/prod_002_fiabilisation_de_la_generation_gnosis.md) | Fiabilisation de la generation Gnosis | Proposed |  |  | product/prod_002_fiabilisation_de_la_generation_gnosis.md |
+| [prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable](product/prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable.md) | Gnosis avec identite commune et cle OpenAI reutilisable | Proposed |  |  | product/prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable.md |
 
 ## Roadmaps
 
@@ -24,7 +25,8 @@ _None_
 | [req_000_cadrer_et_construire_gnosis_generateur_de_decks_kapsule_par_pipeline_openai](request/req_000_cadrer_et_construire_gnosis_generateur_de_decks_kapsule_par_pipeline_openai.md) | Cadrer et construire Gnosis, generateur de decks Kapsule par pipeline OpenAI | Done |  |  | request/req_000_cadrer_et_construire_gnosis_generateur_de_decks_kapsule_par_pipeline_openai.md |
 | [req_001_construire_le_mvp_applicatif_gnosis](request/req_001_construire_le_mvp_applicatif_gnosis.md) | Construire le MVP applicatif Gnosis | Done |  |  | request/req_001_construire_le_mvp_applicatif_gnosis.md |
 | [req_002_repondre_a_l_audit_technique_gnosis_du_2026_07_23](request/req_002_repondre_a_l_audit_technique_gnosis_du_2026_07_23.md) | Repondre a l'audit technique Gnosis du 2026-07-23 | Done |  |  | request/req_002_repondre_a_l_audit_technique_gnosis_du_2026_07_23.md |
-| [req_003_remedier_aux_constats_de_l_audit_technique_2026_07_25](request/req_003_remedier_aux_constats_de_l_audit_technique_2026_07_25.md) | Remedier aux constats de l'audit technique 2026-07-25 | Draft |  |  | request/req_003_remedier_aux_constats_de_l_audit_technique_2026_07_25.md |
+| [req_003_remedier_aux_constats_de_l_audit_technique_2026_07_25](request/req_003_remedier_aux_constats_de_l_audit_technique_2026_07_25.md) | Remedier aux constats de l'audit technique 2026-07-25 | Done |  |  | request/req_003_remedier_aux_constats_de_l_audit_technique_2026_07_25.md |
+| [req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage](request/req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage.md) | Federer Gnosis aux comptes communs et au coffre OpenAI partage | Draft |  |  | request/req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage.md |
 
 ## Backlog
 
@@ -33,9 +35,13 @@ _None_
 | [item_001_cadrer_et_construire_gnosis_generateur_de_decks_kapsule_par_pipeline_openai](backlog/item_001_cadrer_et_construire_gnosis_generateur_de_decks_kapsule_par_pipeline_openai.md) | Cadrer et construire Gnosis, generateur de decks Kapsule par pipeline OpenAI | Done |  | 100% | backlog/item_001_cadrer_et_construire_gnosis_generateur_de_decks_kapsule_par_pipeline_openai.md |
 | [item_002_construire_le_mvp_applicatif_gnosis](backlog/item_002_construire_le_mvp_applicatif_gnosis.md) | Construire le MVP applicatif Gnosis | Done |  | 100% | backlog/item_002_construire_le_mvp_applicatif_gnosis.md |
 | [item_003_repondre_a_l_audit_technique_gnosis_du_2026_07_23](backlog/item_003_repondre_a_l_audit_technique_gnosis_du_2026_07_23.md) | Repondre a l'audit technique Gnosis du 2026-07-23 | Done |  | 100% | backlog/item_003_repondre_a_l_audit_technique_gnosis_du_2026_07_23.md |
-| [item_004_persister_les_jobs_de_generation_avec_annulation_et_progression](backlog/item_004_persister_les_jobs_de_generation_avec_annulation_et_progression.md) | Persister les jobs de generation avec annulation et progression | Ready |  | 0% | backlog/item_004_persister_les_jobs_de_generation_avec_annulation_et_progression.md |
-| [item_005_proteger_la_capacite_de_generation_et_imposer_un_gate_pr](backlog/item_005_proteger_la_capacite_de_generation_et_imposer_un_gate_pr.md) | Proteger la capacite de generation et imposer un gate PR | Ready |  | 0% | backlog/item_005_proteger_la_capacite_de_generation_et_imposer_un_gate_pr.md |
-| [item_006_clarifier_l_acces_et_renforcer_qualite_et_release](backlog/item_006_clarifier_l_acces_et_renforcer_qualite_et_release.md) | Clarifier l'acces et renforcer qualite et release | Ready |  | 0% | backlog/item_006_clarifier_l_acces_et_renforcer_qualite_et_release.md |
+| [item_004_persister_les_jobs_de_generation_avec_annulation_et_progression](backlog/item_004_persister_les_jobs_de_generation_avec_annulation_et_progression.md) | Persister les jobs de generation avec annulation et progression | Done |  | 100% | backlog/item_004_persister_les_jobs_de_generation_avec_annulation_et_progression.md |
+| [item_005_proteger_la_capacite_de_generation_et_imposer_un_gate_pr](backlog/item_005_proteger_la_capacite_de_generation_et_imposer_un_gate_pr.md) | Proteger la capacite de generation et imposer un gate PR | Done |  | 100% | backlog/item_005_proteger_la_capacite_de_generation_et_imposer_un_gate_pr.md |
+| [item_006_clarifier_l_acces_et_renforcer_qualite_et_release](backlog/item_006_clarifier_l_acces_et_renforcer_qualite_et_release.md) | Clarifier l'acces et renforcer qualite et release | Done |  | 100% | backlog/item_006_clarifier_l_acces_et_renforcer_qualite_et_release.md |
+| [item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule](backlog/item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule.md) | Definir et migrer le coffre OpenAI commun aux comptes Kapsule | Ready |  | 0% | backlog/item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule.md |
+| [item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle](backlog/item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle.md) | Integrer Gnosis a l identite commune et a la resolution de cle | Ready |  | 0% | backlog/item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle.md |
+| [item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation](backlog/item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation.md) | Adapter l interface Gnosis pour la cle, la version et la navigation | Ready |  | 0% | backlog/item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation.md |
+| [item_010_preparer_publier_et_verifier_la_release_gnosis](backlog/item_010_preparer_publier_et_verifier_la_release_gnosis.md) | Preparer, publier et verifier la release Gnosis | Ready |  | 0% | backlog/item_010_preparer_publier_et_verifier_la_release_gnosis.md |
 
 ## Tasks
 
@@ -44,4 +50,5 @@ _None_
 | [task_001_cadrer_et_construire_gnosis_generateur_de_decks_kapsule_par_pipeline_openai](tasks/task_001_cadrer_et_construire_gnosis_generateur_de_decks_kapsule_par_pipeline_openai.md) | Cadrer et construire Gnosis, generateur de decks Kapsule par pipeline OpenAI | Done |  | 100% | tasks/task_001_cadrer_et_construire_gnosis_generateur_de_decks_kapsule_par_pipeline_openai.md |
 | [task_002_construire_le_mvp_applicatif_gnosis](tasks/task_002_construire_le_mvp_applicatif_gnosis.md) | Construire le MVP applicatif Gnosis | Done |  | 100% | tasks/task_002_construire_le_mvp_applicatif_gnosis.md |
 | [task_003_repondre_a_l_audit_technique_gnosis_du_2026_07_23](tasks/task_003_repondre_a_l_audit_technique_gnosis_du_2026_07_23.md) | Repondre a l'audit technique Gnosis du 2026-07-23 | Done | codex | 100% | tasks/task_003_repondre_a_l_audit_technique_gnosis_du_2026_07_23.md |
-| [task_004_orchestrer_la_remediation_de_l_audit_gnosis](tasks/task_004_orchestrer_la_remediation_de_l_audit_gnosis.md) | Orchestrer la remediation de l'audit Gnosis | Ready |  | 0% | tasks/task_004_orchestrer_la_remediation_de_l_audit_gnosis.md |
+| [task_004_orchestrer_la_remediation_de_l_audit_gnosis](tasks/task_004_orchestrer_la_remediation_de_l_audit_gnosis.md) | Orchestrer la remediation de l'audit Gnosis | Done | codex | 100% | tasks/task_004_orchestrer_la_remediation_de_l_audit_gnosis.md |
+| [task_005_orchestrer_l_identite_commune_et_la_release_gnosis](tasks/task_005_orchestrer_l_identite_commune_et_la_release_gnosis.md) | Orchestrer l identite commune et la release Gnosis | Ready |  | 0% | tasks/task_005_orchestrer_l_identite_commune_et_la_release_gnosis.md |

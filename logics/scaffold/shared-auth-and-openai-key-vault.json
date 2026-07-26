@@ -1,0 +1,183 @@
+{
+  "title": "Federer Gnosis aux comptes communs et au coffre OpenAI partage",
+  "references": [
+    "package.json",
+    "src/server/app.mjs",
+    "src/client/main.jsx",
+    "/home/paulm/dev/Kapsule/apps/backend/src/auth.mjs",
+    "/home/paulm/dev/Kapsule/apps/backend/src/db.mjs",
+    "/home/paulm/dev/ClaimLens/src/claimlens/kapsule_auth.py",
+    "/home/paulm/dev/ClaimLens/src/claimlens/api_keys.py",
+    "/home/paulm/dev/ClaimLens/src/claimlens/secrets.py"
+  ],
+  "request": {
+    "complexity": "High",
+    "theme": "Identite partagee, gestion de secrets et livraison",
+    "needs": [
+      "Gnosis doit reutiliser les comptes communs de Kapsule et ClaimLens, sans creer une identite ou un mot de passe distinct.",
+      "Un utilisateur connecte doit pouvoir reutiliser sa cle OpenAI deja enregistree dans ClaimLens et mettre a jour sa cle depuis un coffre commun.",
+      "Un invite peut fournir une cle OpenAI pour une generation, sans persistence ; ce champ n'est visible que pour un invite ou un utilisateur sans cle enregistree.",
+      "Le jeton GNOSIS_ACCESS_TOKEN doit disparaitre de l'interface et ne plus intervenir pour les utilisateurs connectes.",
+      "L'en-tete doit afficher strictement la version applicative, par exemple v1.0.0, ainsi qu'un lien vers https://paulmondou.fr/.",
+      "La livraison doit inclure un commit de la chaine Logics, un commit d'implementation, une preparation de version, un commit de release, un push suivi jusqu'a CI verte, un tag de version, une release et la verification du deploiement sain."
+    ],
+    "context": [
+      "Kapsule est la source actuelle des comptes et des mots de passe scrypt ; ClaimLens authentifie deja ces comptes par lecture seule de la base Kapsule.",
+      "ClaimLens chiffre ses cles OpenAI par utilisateur avec AES-GCM et un secret de deploiement hors SQLite, mais les enregistre actuellement dans sa base applicative.",
+      "Gnosis est une application Node/Express avec jobs persistants et accepte aujourd'hui une cle ponctuelle ainsi qu'un GNOSIS_ACCESS_TOKEN partage.",
+      "La base commune doit exposer un proprietaire unique pour les ecritures du coffre de cles. Gnosis et ClaimLens ne doivent pas ecrire concurremment dans le meme fichier SQLite sans contrat et migration coordonnes.",
+      "La version courante du paquet Gnosis est 1.0.0 ; l'en-tete doit lire cette version depuis la source de version du build, sans commit ni date dans le texte visible."
+    ],
+    "acceptance_criteria": [
+      "AC1: Gnosis authentifie un compte Kapsule commun et ne cree ni table de comptes ni mot de passe propres a Gnosis.",
+      "AC2: Une cle OpenAI chiffree deja associee au compte commun par ClaimLens est resolue et utilisable par Gnosis sans resaisie ni affichage en clair.",
+      "AC3: Le coffre partage chiffre les cles avec AES-GCM et un secret de deploiement externe ; les cles sont absentes des logs, reponses API, jobs, sauvegardes textuelles et interfaces, sauf valeur masquee.",
+      "AC4: Le champ de cle ponctuelle est present pour les invites et les utilisateurs sans cle enregistree, absent pour les utilisateurs ayant une cle sauvegardee, et toute cle ponctuelle reste limitee a la requete ou au job sans persistence.",
+      "AC5: GNOSIS_ACCESS_TOKEN n'est plus affiche ni requis pour une session authentifiee ; son comportement residuel est documente et couvert par des tests de compatibilite ou retire explicitement.",
+      "AC6: Les jobs Gnosis sont attribues a une identite commune ou a une identite invitee et ne sont lisibles, annulables ou recuperables que par leur proprietaire.",
+      "AC7: L'en-tete de Gnosis affiche v<version de package.json> et contient un lien accessible vers https://paulmondou.fr/.",
+      "AC8: La livraison contient un commit Logics, un commit d'implementation, une preparation SemVer, un commit de release, un push, une CI verte, un tag et une release correspondant exactement a la version publiee.",
+      "AC9: Apres release, le deploiement est verifie par healthcheck, parcours de connexion et generation controlee, et son resultat est consigne."
+    ]
+  },
+  "product": {
+    "title": "Gnosis avec identite commune et cle OpenAI reutilisable",
+    "overview": "Gnosis rejoint l'identite Kapsule/ClaimLens et reutilise un coffre OpenAI commun sans exposer les secrets.",
+    "goals": [
+      "Supprimer la friction de ressaisie de cle pour les utilisateurs deja equipes dans ClaimLens.",
+      "Maintenir un parcours invite BYOK non persistant.",
+      "Conserver un cloisonnement strict des jobs et des cles.",
+      "Rendre la version et le retour au site paulmondou immediatement visibles.",
+      "Livrer une release reproductible et verifiee jusqu'au deploiement."
+    ],
+    "non_goals": [
+      "Ajouter OAuth, SSO tiers ou inscription publique dans Gnosis.",
+      "Partager une cle OpenAI entre plusieurs comptes.",
+      "Utiliser une cle OpenAI serveur pour financer les generations des utilisateurs.",
+      "Afficher, exporter ou stocker une cle ponctuelle invitee."
+    ]
+  },
+  "backlog_items": [
+    {
+      "title": "Definir et migrer le coffre OpenAI commun aux comptes Kapsule",
+      "priority": "High",
+      "complexity": "High",
+      "theme": "Contrat de donnees et secrets partages",
+      "request_acs": ["AC1", "AC2", "AC3"],
+      "problem": [
+        "Les comptes sont communs via Kapsule mais la cle chiffree est encore isolee dans la base ClaimLens.",
+        "Une ecriture directe par plusieurs applications dans un SQLite partage serait fragile et ambigue sur la responsabilite des migrations."
+      ],
+      "scope_in": [
+        "Choisir le service proprietaire et le contrat d'acces au coffre commun.",
+        "Migrer sans perte les cles OpenAI ClaimLens vers le coffre commun ou fournir une compatibilite de lecture documentee pendant migration.",
+        "Conserver AES-256-GCM, les valeurs masquees et un secret de chiffrement externe commun ou une rotation explicitement planifiee.",
+        "Ajouter la lecture de compte Kapsule et le contrat de resolution de cle necessaires a Gnosis."
+      ],
+      "scope_out": [
+        "Copier des mots de passe hors de la base Kapsule.",
+        "Introduire un echange de secrets en clair entre frontends.",
+        "Modifier une cle existante sans migration testee et plan de retour arriere."
+      ],
+      "acceptance_criteria": [
+        "AC1: Le proprietaire unique des ecritures, le schema, les migrations, les droits d'acces et la strategie de sauvegarde/rotation sont documentes et testes.",
+        "AC2: Une cle OpenAI ClaimLens existante peut etre resolue pour le meme identifiant Kapsule sans reauthentification ni copie en clair.",
+        "AC3: Les tests prouvent chiffrement, masquage, redaction, echec propre sans secret de chiffrement et isolation par utilisateur."
+      ]
+    },
+    {
+      "title": "Integrer Gnosis a l identite commune et a la resolution de cle",
+      "priority": "High",
+      "complexity": "High",
+      "theme": "Authentification et autorisation Gnosis",
+      "request_acs": ["AC1", "AC2", "AC4", "AC5", "AC6"],
+      "problem": [
+        "Gnosis accepte aujourd'hui un jeton partage expose manuellement et ne connait pas le proprietaire de ses jobs.",
+        "Le pipeline doit resoudre la bonne cle sans persister une cle invitee."
+      ],
+      "scope_in": [
+        "Utiliser l'authentification Kapsule existante et une session Gnosis securisee rattachee au meme compte.",
+        "Resoudre une cle invitee ponctuelle en priorite, puis la cle OpenAI commune de l'utilisateur connecte, sans fallback de cle serveur pour les utilisateurs.",
+        "Rattacher jobs, consultation et annulation a l'identite connectee ou invitee.",
+        "Retirer le champ GNOSIS_ACCESS_TOKEN et supprimer ou isoler le mecanisme serveur residuel."
+      ],
+      "scope_out": [
+        "Creer une base de comptes Gnosis.",
+        "Persister des cles invitees ou les incorporer aux fichiers de jobs.",
+        "Autoriser un utilisateur a consommer la cle d'un autre compte."
+      ],
+      "acceptance_criteria": [
+        "AC1: Une session Gnosis valide est liee a un compte Kapsule et les routes sensibles refusent les sessions absentes ou invalides selon le parcours concerne.",
+        "AC2: Une generation connectee utilise une cle commune existante ; une generation invitee ou sans cle utilise seulement la cle saisie pour cette action.",
+        "AC3: Les jobs ne divulguent ni la cle ni les donnees d'un autre proprietaire et les tests couvrent les acces croises.",
+        "AC4: Aucun navigateur n'a besoin de connaitre GNOSIS_ACCESS_TOKEN."
+      ]
+    },
+    {
+      "title": "Adapter l interface Gnosis pour la cle, la version et la navigation",
+      "priority": "Medium",
+      "complexity": "Medium",
+      "theme": "Experience utilisateur",
+      "request_acs": ["AC3", "AC4", "AC5", "AC7"],
+      "problem": [
+        "L'interface expose deux champs de secrets sans distinguer l'identite et ne rend pas la version ni le retour au site disponibles."
+      ],
+      "scope_in": [
+        "Afficher l'etat connecte, la cle enregistree masquee et une action de gestion vers le coffre commun si necessaire.",
+        "Afficher la cle ponctuelle seulement a l'invite ou a l'utilisateur connecte sans cle sauvegardee.",
+        "Afficher v<version package.json> dans l'en-tete et un lien vers https://paulmondou.fr/.",
+        "Conserver des libelles accessibles et les comportements mobiles."
+      ],
+      "scope_out": [
+        "Afficher une cle OpenAI complete apres son enregistrement.",
+        "Ajouter un ecran marketing ou changer la direction visuelle du produit."
+      ],
+      "acceptance_criteria": [
+        "AC1: Les etats invite, connecte sans cle et connecte avec cle rendent les bons controles sans fuite de secret.",
+        "AC2: L'en-tete affiche exactement la version du package et un lien fonctionnel, securise et accessible vers paulmondou.fr.",
+        "AC3: Les tests frontend couvrent les trois etats de cle ainsi que la version et le lien."
+      ]
+    },
+    {
+      "title": "Preparer, publier et verifier la release Gnosis",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Release et deploiement",
+      "request_acs": ["AC8", "AC9"],
+      "problem": [
+        "La livraison doit etre tracable depuis la specification jusqu'au deploiement, avec une version et un tag qui correspondent au code reel."
+      ],
+      "scope_in": [
+        "Valider Logics, tests, build et audit avant chaque commit pertinent.",
+        "Creer et verifier le commit de la chaine Logics avant implementation.",
+        "Preparer le bump SemVer de fonctionnalite, mettre a jour la version visible et documenter les notes de release.",
+        "Creer le commit de release, pousser, suivre les checks CI jusqu'a leur succes, creer et pousser le tag, publier la release, puis verifier le healthcheck et un parcours deploye controle."
+      ],
+      "scope_out": [
+        "Declarer une CI ou un deploiement reussi sans preuve observable.",
+        "Taguer une version differente de celle contenue dans package.json."
+      ],
+      "acceptance_criteria": [
+        "AC1: Les commits Logics, implementation et release sont identifies et la version package, UI, tag et release sont identiques.",
+        "AC2: Tous les checks CI requis sont verts apres le push de release avant publication du tag ou de la release.",
+        "AC3: Le deploiement est confirme par healthcheck, connexion et generation controlee sans fuite de cle, avec resultat documente."
+      ]
+    }
+  ],
+  "orchestration_task": {
+    "title": "Orchestrer l identite commune et la release Gnosis",
+    "plan": [
+      "Valider le contrat du coffre commun et sa migration avec les proprietaires Kapsule et ClaimLens.",
+      "Livrer et verifier l'acces Gnosis a l'identite et a la cle commune, puis les contraintes de proprietaire sur les jobs.",
+      "Livrer l'interface conditionnelle, la version visible et le lien paulmondou.fr.",
+      "Executer les validations Logics et applicatives, puis creer le commit d'implementation.",
+      "Preparer la version SemVer, creer le commit de release, pousser et attendre les checks CI requis.",
+      "Apres CI verte, creer/pousser le tag et la release, puis suivre le deploiement jusqu'aux preuves de sante et de parcours fonctionnel."
+    ]
+  },
+  "context_pack": {
+    "out": "logics/context-packs/shared-auth-and-openai-key-vault.json",
+    "mode": "summary-only",
+    "profile": "normal"
+  }
+}
