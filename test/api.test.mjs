@@ -57,12 +57,13 @@ test("POST /api/generate-deck rejects empty input", async () => {
   assert.match(response.body.error, /au moins un sujet/);
 });
 
-test("GET /api/health reports whether a server API key is configured", async () => {
-  const app = createApp({ OPENAI_API_KEY: "sk-server-key" });
+test("GET /api/health reports the deployed version and server API key state", async () => {
+  const app = createApp({ OPENAI_API_KEY: "sk-server-key", GNOSIS_VERSION: "v1.1.2" });
 
   const response = await request(app).get("/api/health").expect(200);
 
   assert.equal(response.body.ok, true);
+  assert.equal(response.body.version, "v1.1.2");
   assert.equal(response.body.hasServerApiKey, true);
 });
 

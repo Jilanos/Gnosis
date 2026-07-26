@@ -139,6 +139,7 @@ export function createApp(env = process.env) {
   app.get("/api/health", (_req, res) => {
     res.json({
       ok: true,
+      version: env.GNOSIS_VERSION || "unknown",
       model: env.OPENAI_MODEL || "gpt-5.6",
       mock: env.GNOSIS_MOCK_OPENAI === "1" || env.NODE_ENV === "test",
       hasServerApiKey: Boolean(env.OPENAI_API_KEY),
