@@ -84,5 +84,32 @@ bornee par `GNOSIS_MAX_RUNNING_JOBS` et `GNOSIS_MAX_QUEUED_JOBS`. Le serveur pro
 appels OpenAI. En production, configure `GNOSIS_ACCESS_TOKEN`; l'interface transmet ce jeton dans
 `x-gnosis-access-token` sans jamais exposer `OPENAI_API_KEY`.
 
+## Authentification commune Kapsule / ClaimLens
+
+Gnosis reutilise les comptes Kapsule et le cookie de session ClaimLens. Configure
+les chemins `GNOSIS_KAPSULE_DB` et `GNOSIS_CLAIMLENS_DB` vers les bases deja
+utilisees par ces applications, ainsi que `GNOSIS_KEY_ENCRYPTION_SECRET` avec la
+meme valeur que `CLAIMLENS_KEY_ENCRYPTION_SECRET`. Gnosis lit et met a jour la
+table `user_api_keys` de ClaimLens pour reutiliser la cle OpenAI chiffree du
+compte. Le secret de chiffrement ne doit jamais etre stocke dans SQLite.
+
+Un invite peut fournir une cle pour un seul job ; elle n'est pas sauvegardee.
+Pour un utilisateur connecte sans cle sauvegardee, le champ propose explicitement
+de la memoriser. Lorsqu'une cle existe deja, le champ n'est pas affiche. Les jobs
+sont cloisonnes par session utilisateur ou identite invitee.
+
+Variables recommandees en production :
+
+```text
+GNOSIS_KAPSULE_DB=/kapsule-data/kapsule.sqlite
+GNOSIS_CLAIMLENS_DB=/claimlens-data/claimlens.sqlite3
+GNOSIS_KEY_ENCRYPTION_SECRET=<meme secret que ClaimLens>
+GNOSIS_SECURE_COOKIES=1
+```
+
+`GNOSIS_ACCESS_TOKEN` n'est plus expose par l'interface. Le support serveur
+historique reste uniquement une compatibilite de deploiement et ne remplace pas
+une cle personnelle pour un utilisateur connecte.
+
 `GNOSIS_TRUST_PROXY` doit correspondre au nombre de proxies Caddy effectivement controles. La CI PR
 execute tests, build, validation de fixture et audit npm avant merge.

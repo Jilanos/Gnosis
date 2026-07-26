@@ -9,11 +9,15 @@ import {
   Download,
   KeyRound,
   Loader2,
+  LogIn,
+  LogOut,
   Moon,
   Play,
+  Save,
   Sparkles,
   Sun,
 } from "lucide-react";
+import packageJson from "../../package.json";
 import "./styles.css";
 
 const DEFAULT_TOPICS = `DNS
@@ -28,6 +32,7 @@ CI/CD
 observabilite`;
 
 const GENERATION_TIMEOUT_MS = 180_000;
+const APP_VERSION = packageJson.version;
 
 const LEVELS = [
   { value: "debutant", label: "Debutant" },
@@ -174,9 +179,19 @@ function App() {
     targetCards: 8,
   });
   const [apiKey, setApiKey] = React.useState("");
-  const [accessToken, setAccessToken] = React.useState("");
+  const [saveApiKey, setSaveApiKey] = React.useState(true);
+  const [session, setSession] = React.useState({ loading: true, authenticated: false });
+  const [loginForm, setLoginForm] = React.useState({ email: "", password: "" });
+  const [loginError, setLoginError] = React.useState("");
   const [state, setState] = React.useState({ status: "idle" });
   const [copied, setCopied] = React.useState(false);
+
+  React.useEffect(() => {
+    fetch("/api/session")
+      .then((response) => response.json())
+      .then((body) => setSession({ loading: false, ...body }))
+      .catch(() => setSession({ loading: false, authenticated: false }));
+  }, []);
 
   const topics = splitTopics(topicsText);
   const deck = state.result?.deck;
@@ -196,12 +211,13 @@ function App() {
         signal: controller.signal,
         headers: {
           "Content-Type": "application/json",
-          ...(accessToken.trim() ? { "x-gnosis-access-token": accessToken.trim() } : {}),
+          ...(session.csrfToken ? { "x-csrf-token": session.csrfToken } : {}),
         },
         body: JSON.stringify({
           topics,
           options,
           apiKey: apiKey.trim(),
+          saveApiKey: session.authenticated && !session.hasOpenAiKey && saveApiKey,
         }),
       });
       const body = await response.json();
@@ -225,11 +241,43 @@ function App() {
         error.name === "AbortError"
           ? "Generation interrompue: le delai maximal de 120 secondes est depasse."
           : error.message;
-      if (error.name === "AbortError" && jobId) await fetch(`/api/generate-deck/${jobId}`, { method: "DELETE" });
+      if (error.name === "AbortError" && jobId) {
+        await fetch(`/api/generate-deck/${jobId}`, {
+          method: "DELETE",
+          headers: session.csrfToken ? { "x-csrf-token": session.csrfToken } : {},
+        });
+      }
       setState({ status: "error", error: message });
     } finally {
       window.clearTimeout(timeout);
     }
+  }
+
+  async function login(event) {
+    event.preventDefault();
+    setLoginError("");
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(loginForm),
+    });
+    const body = await response.json();
+    if (!response.ok) {
+      setLoginError(body.error || "Connexion impossible.");
+      return;
+    }
+    setSession(body);
+    setLoginForm({ email: "", password: "" });
+    setApiKey("");
+  }
+
+  async function logout() {
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      headers: session.csrfToken ? { "x-csrf-token": session.csrfToken } : {},
+    });
+    setSession({ loading: false, authenticated: false });
+    setApiKey("");
   }
 
   function updateOption(key, value) {
@@ -269,7 +317,7 @@ function App() {
             </span>
             <div>
               <strong>Gnosis</strong>
-              <span className="sub">Generateur de decks Kapsule</span>
+              <span className="sub">Generateur de decks Kapsule · v{APP_VERSION}</span>
             </div>
           </div>
 
@@ -289,6 +337,9 @@ function App() {
           </div>
 
           <div className="topbar-right">
+            <a className="site-link" href="https://paulmondou.fr/" title="Retourner sur paulmondou.fr">
+              paulmondou.fr
+            </a>
             <span className="status-pill">
               <span className="dot" />
               Pipeline OpenAI
@@ -302,8 +353,39 @@ function App() {
             >
               {theme === "dark" ? <Moon size={17} /> : <Sun size={17} />}
             </button>
+            {session.authenticated ? (
+              <button className="auth-button" type="button" title="Se deconnecter" onClick={logout}>
+                <LogOut size={15} />
+                {session.user.email}
+              </button>
+            ) : (
+              <form className="login-form" onSubmit={login}>
+                <input
+                  type="email"
+                  aria-label="Email"
+                  placeholder="Email"
+                  autoComplete="username"
+                  value={loginForm.email}
+                  onChange={(event) => setLoginForm((current) => ({ ...current, email: event.target.value }))}
+                />
+                <input
+                  type="password"
+                  aria-label="Mot de passe"
+                  placeholder="Mot de passe"
+                  autoComplete="current-password"
+                  value={loginForm.password}
+                  onChange={(event) => setLoginForm((current) => ({ ...current, password: event.target.value }))}
+                />
+                <button className="auth-button" type="submit" title="Se connecter">
+                  <LogIn size={15} />
+                  Connexion
+                </button>
+              </form>
+            )}
           </div>
         </header>
+
+        {loginError && <div className="auth-error" role="alert">{loginError}</div>}
 
         <section className="workspace">
           <form className="surface" onSubmit={(event) => event.preventDefault()}>
@@ -399,7 +481,7 @@ function App() {
                 </label>
               </div>
 
-              <label className="field" style={{ marginBottom: 0 }}>
+              {(!session.loading && (!session.authenticated || !session.hasOpenAiKey)) && <label className="field" style={{ marginBottom: 0 }}>
                 <span className="flabel">Cle API OpenAI</span>
                 <div className="input-icon">
                   <KeyRound size={15} />
@@ -409,24 +491,24 @@ function App() {
                     placeholder="sk-..."
                     autoComplete="off"
                     spellCheck={false}
-                    onChange={(event) => setApiKey(event.target.value)}
+                  onChange={(event) => setApiKey(event.target.value)}
                   />
                 </div>
-              </label>
-
-              <label className="field" style={{ marginBottom: 0 }}>
-                <span className="flabel">Jeton d'acces serveur</span>
-                <div className="input-icon">
-                  <KeyRound size={15} />
+                {session.authenticated && <label className="save-key-toggle">
                   <input
-                    type="password"
-                    value={accessToken}
-                    placeholder="GNOSIS_ACCESS_TOKEN"
-                    autoComplete="off"
-                    onChange={(event) => setAccessToken(event.target.value)}
+                    type="checkbox"
+                    checked={saveApiKey}
+                    onChange={(event) => setSaveApiKey(event.target.checked)}
                   />
+                  <Save size={14} />
+                  Enregistrer pour les prochaines generations
+                </label>}
+              </label>}
+              {session.authenticated && session.hasOpenAiKey && (
+                <div className="saved-key-note">
+                  Cle OpenAI sauvegardee{session.openAiKey?.masked ? ` (${session.openAiKey.masked})` : ""}.
                 </div>
-              </label>
+              )}
             </div>
 
             <div className="control-foot">

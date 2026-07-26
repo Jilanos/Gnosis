@@ -252,6 +252,52 @@ button:disabled {
   margin-left: auto;
 }
 
+.site-link,
+.auth-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  border: 1px solid var(--brd);
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: var(--glass-2);
+  color: var(--text);
+  font-size: 0.72rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-link:hover,
+.auth-button:hover {
+  border-color: var(--brd-strong);
+  color: var(--aqua);
+}
+
+.login-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.login-form input {
+  width: 132px;
+  min-height: 34px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+}
+
+.auth-error {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  border: 1px solid color-mix(in srgb, var(--coral) 42%, transparent);
+  border-radius: var(--r-md);
+  color: var(--coral);
+  background: color-mix(in srgb, var(--coral) 9%, transparent);
+  font-size: 0.8rem;
+}
+
 .status-pill {
   display: inline-flex;
   align-items: center;
@@ -530,6 +576,27 @@ select {
 
 .input-icon input:focus {
   box-shadow: none;
+}
+
+.save-key-toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.save-key-toggle input {
+  width: auto;
+}
+
+.saved-key-note {
+  padding: 10px 12px;
+  border: 1px solid var(--brd);
+  border-radius: var(--r-md);
+  color: var(--muted);
+  font-size: 0.8rem;
 }
 
 /* bouton primaire ancré en bas du panneau d'entrée */
@@ -898,6 +965,25 @@ select {
 }
 
 @media (max-width: 520px) {
+  .topbar {
+    flex-wrap: wrap;
+    border-radius: var(--r-lg);
+  }
+
+  .topbar-right {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .login-form {
+    flex: 1 1 auto;
+  }
+
+  .login-form input {
+    min-width: 0;
+    width: 100%;
+  }
+
   .settings-grid {
     grid-template-columns: 1fr;
   }

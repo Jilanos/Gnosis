@@ -1,10 +1,10 @@
 ## item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation - Adapter l interface Gnosis pour la cle, la version et la navigation
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 75%
 > Complexity: Medium
 > Theme: Experience utilisateur
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.

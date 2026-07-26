@@ -1,10 +1,10 @@
 ## item_010_preparer_publier_et_verifier_la_release_gnosis - Preparer, publier et verifier la release Gnosis
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 75%
 > Complexity: Medium
 > Theme: Release et deploiement
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.

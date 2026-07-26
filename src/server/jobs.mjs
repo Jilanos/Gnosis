@@ -49,6 +49,10 @@ export function createJobManager(env = process.env) {
     return safe;
   }
 
+  function belongsTo(job, owner) {
+    return !owner || job.owner?.type === owner.type && job.owner.id === owner.id;
+  }
+
   async function pump() {
     while (running < maxRunning) {
       const job = [...jobs.values()].find((candidate) => candidate.status === "queued");
@@ -95,7 +99,7 @@ export function createJobManager(env = process.env) {
     async init() {
       await restore();
     },
-    async create({ topics, options, requestEnv }) {
+    async create({ topics, options, requestEnv, owner }) {
       const queued = [...jobs.values()].filter((job) => ["queued", "running"].includes(job.status));
       if (queued.length >= maxRunning + maxQueue) {
         const error = new Error("La file de generation est pleine.");
@@ -112,6 +116,7 @@ export function createJobManager(env = process.env) {
         topics,
         options,
         requestEnv,
+        owner,
         createdAt: new Date().toISOString(),
         controller: new AbortController(),
       };
@@ -120,13 +125,13 @@ export function createJobManager(env = process.env) {
       void pump();
       return publicJob(job);
     },
-    get(id) {
+    get(id, owner) {
       const job = jobs.get(id);
-      return job ? publicJob(job) : null;
+      return job && belongsTo(job, owner) ? publicJob(job) : null;
     },
-    async cancel(id) {
+    async cancel(id, owner) {
       const job = jobs.get(id);
-      if (!job) return null;
+      if (!job || !belongsTo(job, owner)) return null;
       if (["queued", "running"].includes(job.status)) {
         job.controller.abort();
         job.status = "cancelled";

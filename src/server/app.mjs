@@ -1,6 +1,8 @@
 import cors from "cors";
 import express from "express";
 import path from "node:path";
+import crypto from "node:crypto";
+import { createAuthStore } from "./auth.mjs";
 import { createJobManager } from "./jobs.mjs";
 import { clampInteger, compactTopics } from "./utils.mjs";
 
@@ -96,6 +98,16 @@ function errorStatus(error) {
   return error.status || 500;
 }
 
+function csrfError(req, owner) {
+  if (owner.type !== "user") return null;
+  const supplied = String(req.get("x-csrf-token") || "");
+  const expected = Buffer.from(owner.session.csrf_token);
+  const actual = Buffer.from(supplied);
+  return actual.length === expected.length && crypto.timingSafeEqual(actual, expected)
+    ? null
+    : { status: 403, error: "Session expiree ou protection CSRF invalide." };
+}
+
 export function createApp(env = process.env) {
   const app = express();
   const trustedProxy = Number(env.GNOSIS_TRUST_PROXY || 0);
@@ -104,6 +116,7 @@ export function createApp(env = process.env) {
   const maxCards = clampInteger(env.MAX_CARDS, 2, 100, 24);
   const rateLimit = createRateLimiter(env);
   const jobs = createJobManager(env);
+  const auth = createAuthStore(env);
 
   app.use(cors(corsOptions(env)));
   app.use(express.json({ limit: "256kb" }));
@@ -129,7 +142,38 @@ export function createApp(env = process.env) {
       model: env.OPENAI_MODEL || "gpt-5.6",
       mock: env.GNOSIS_MOCK_OPENAI === "1" || env.NODE_ENV === "test",
       hasServerApiKey: Boolean(env.OPENAI_API_KEY),
+      sharedAuth: Boolean(env.GNOSIS_KAPSULE_DB || env.KAPSULE_DB) && Boolean(env.GNOSIS_CLAIMLENS_DB || env.CLAIMLENS_DB),
     });
+  });
+
+  app.get("/api/session", (req, res) => {
+    const session = auth.getSession(req);
+    if (!session) return res.json({ authenticated: false });
+    const key = auth.getOpenAiKeyMeta(session.user_id);
+    return res.json({
+      authenticated: true,
+      user: { id: String(session.user_id), email: session.email },
+      csrfToken: session.csrf_token,
+      hasOpenAiKey: Boolean(key),
+      openAiKey: key ? { masked: key.masked_value, updatedAt: key.updated_at } : null,
+    });
+  });
+
+  app.post("/api/auth/login", (req, res) => {
+    const user = auth.authenticate(req.body?.email, req.body?.password, req.get("user-agent"));
+    if (!user) return res.status(401).json({ error: "Email ou mot de passe incorrect." });
+    auth.setSessionCookie(res, user.token);
+    return res.json({
+      authenticated: true,
+      user: { id: String(user.id), email: user.email },
+      csrfToken: user.csrfToken,
+      hasOpenAiKey: auth.hasOpenAiKey(user.id),
+    });
+  });
+
+  app.post("/api/auth/logout", (req, res) => {
+    auth.logout(req, res);
+    return res.json({ authenticated: false });
   });
 
   app.post("/api/generate-deck", rateLimit, async (req, res) => {
@@ -141,9 +185,22 @@ export function createApp(env = process.env) {
 
       const rawOptions = req.body?.options ?? {};
       const requestApiKey = String(req.body?.apiKey || "").trim();
-      const accessError = verifyAccessToken(req, env, requestApiKey);
+      const owner = auth.owner(req, res);
+      const csrf = csrfError(req, owner);
+      if (csrf) return res.status(csrf.status).json({ error: csrf.error });
+      const resolved = auth.resolveOpenAiKey(owner.type === "user" ? owner.id : null, requestApiKey);
+      const accessError = verifyAccessToken(req, env, resolved.value);
       if (accessError) {
         return res.status(accessError.status).json({ error: accessError.error });
+      }
+      if (!resolved.value && env.OPENAI_API_KEY && req.get("x-gnosis-access-token")) {
+        resolved.value = env.OPENAI_API_KEY;
+      }
+      if (!resolved.value) {
+        return res.status(401).json({ error: "Une cle OpenAI est necessaire pour generer ce deck." });
+      }
+      if (owner.type === "user" && requestApiKey && req.body?.saveApiKey === true) {
+        auth.saveOpenAiKey(owner.id, requestApiKey);
       }
       const options = {
         title: String(rawOptions.title || "").trim(),
@@ -157,8 +214,8 @@ export function createApp(env = process.env) {
         targetCards: clampInteger(rawOptions.targetCards, 2, maxCards, 8),
       };
 
-      const requestEnv = requestApiKey ? { ...env, OPENAI_API_KEY: requestApiKey } : env;
-      const job = await jobs.create({ topics, options, requestEnv });
+      const requestEnv = { ...env, OPENAI_API_KEY: resolved.value };
+      const job = await jobs.create({ topics, options, requestEnv, owner: { type: owner.type, id: owner.id } });
       res.status(202).json(job);
     } catch (error) {
       const status = errorStatus(error);
@@ -171,13 +228,16 @@ export function createApp(env = process.env) {
   });
 
   app.get("/api/generate-deck/:id", (req, res) => {
-    const job = jobs.get(req.params.id);
+    const job = jobs.get(req.params.id, auth.owner(req, res));
     if (!job) return res.status(404).json({ error: "Job introuvable." });
     return res.json(job);
   });
 
   app.delete("/api/generate-deck/:id", async (req, res) => {
-    const job = await jobs.cancel(req.params.id);
+    const owner = auth.owner(req, res);
+    const csrf = csrfError(req, owner);
+    if (csrf) return res.status(csrf.status).json({ error: csrf.error });
+    const job = await jobs.cancel(req.params.id, owner);
     if (!job) return res.status(404).json({ error: "Job introuvable." });
     return res.json(job);
   });

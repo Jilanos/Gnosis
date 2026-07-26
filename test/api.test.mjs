@@ -13,8 +13,9 @@ test("POST /api/generate-deck returns a valid deck in mock mode", async () => {
     MAX_INPUT_TOPICS: "20",
     MAX_CARDS: "8",
   });
+  const agent = request.agent(app);
 
-  const response = await request(app)
+  const response = await agent
     .post("/api/generate-deck")
     .send({
       topics: ["DNS", "TCP handshake"],
@@ -26,7 +27,7 @@ test("POST /api/generate-deck returns a valid deck in mock mode", async () => {
   let job = response.body;
   for (let attempt = 0; attempt < 20 && job.status !== "completed"; attempt += 1) {
     await new Promise((resolve) => setTimeout(resolve, 5));
-    job = (await request(app).get(`/api/generate-deck/${job.id}`)).body;
+    job = (await agent.get(`/api/generate-deck/${job.id}`)).body;
   }
   assert.equal(job.status, "completed");
   assert.equal(job.result.validation.valid, true);

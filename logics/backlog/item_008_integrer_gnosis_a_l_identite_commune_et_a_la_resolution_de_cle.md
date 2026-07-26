@@ -1,10 +1,10 @@
 ## item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle - Integrer Gnosis a l identite commune et a la resolution de cle
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 75%
 > Complexity: High
 > Theme: Authentification et autorisation Gnosis
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.

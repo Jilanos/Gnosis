@@ -1,10 +1,10 @@
 ## item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule - Definir et migrer le coffre OpenAI commun aux comptes Kapsule
 > From version: 1.0.0
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 75%
 > Complexity: High
 > Theme: Contrat de donnees et secrets partages
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
