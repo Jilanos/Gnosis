@@ -322,29 +322,27 @@ function App() {
               <Brain size={19} />
             </span>
             <div className="brand-copy">
-              <strong>Gnosis</strong>
-              <span className="sub">
-                Generateur de decks Kapsule
-                <a
-                  className="brand-icon-link"
-                  href="https://kapsule.paulmondou.fr/"
-                  target="_blank"
-                  rel="noreferrer"
-                  title="Aller sur Kapsule"
-                  aria-label="Aller sur Kapsule"
-                >
-                  <img src={kapsuleIcon} alt="" aria-hidden="true" />
-                </a>
-                · v{APP_VERSION}
-              </span>
+              <div className="brand-line">
+                <strong>Gnosis</strong>
+                <span className="version-chip">v{APP_VERSION}</span>
+              </div>
+              <span className="sub">Generateur de decks</span>
             </div>
           </div>
 
+          <a
+            className="topbar-kapsule"
+            href="https://kapsule.paulmondou.fr/"
+            target="_blank"
+            rel="noreferrer"
+            title="Aller sur Kapsule"
+            aria-label="Aller sur Kapsule"
+          >
+            <img src={kapsuleIcon} alt="" aria-hidden="true" />
+            <span>Kapsule</span>
+          </a>
+
           <div className="topbar-right">
-            <span className="status-pill">
-              <span className="dot" />
-              Pipeline OpenAI
-            </span>
             <button
               className="theme-toggle"
               type="button"
