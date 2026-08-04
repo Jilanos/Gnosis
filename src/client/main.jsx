@@ -18,6 +18,10 @@ import {
   Sun,
 } from "lucide-react";
 import packageJson from "../../package.json";
+import kapsuleIconDark from "./assets/kapsule-favicon-dark-mirrored.png";
+import kapsuleIconLight from "./assets/kapsule-favicon-light-mirrored.png";
+import paulmondouIconDark from "./assets/paulmondou-icon-dark-transparent.png";
+import paulmondouIconLight from "./assets/paulmondou-icon-light-transparent.png";
 import "./styles.css";
 
 const DEFAULT_TOPICS = `DNS
@@ -198,6 +202,8 @@ function App() {
   const plan = state.result?.plan;
   const metrics = state.result?.metrics;
   const pipeline = state.result?.pipeline ?? [];
+  const kapsuleIcon = theme === "dark" ? kapsuleIconLight : kapsuleIconDark;
+  const paulmondouIcon = theme === "dark" ? paulmondouIconLight : paulmondouIconDark;
 
   async function generateDeck() {
     setCopied(false);
@@ -315,31 +321,26 @@ function App() {
             <span className="brand-mark">
               <Brain size={19} />
             </span>
-            <div>
+            <div className="brand-copy">
               <strong>Gnosis</strong>
-              <span className="sub">Generateur de decks Kapsule · v{APP_VERSION}</span>
+              <span className="sub">
+                Generateur de decks Kapsule
+                <a
+                  className="brand-icon-link"
+                  href="https://kapsule.paulmondou.fr/"
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Aller sur Kapsule"
+                  aria-label="Aller sur Kapsule"
+                >
+                  <img src={kapsuleIcon} alt="" aria-hidden="true" />
+                </a>
+                · v{APP_VERSION}
+              </span>
             </div>
           </div>
 
-          <div className="mini-metrics" aria-label="Resume du pipeline">
-            <span className="mm">
-              <span className="v">{topics.length}</span>
-              <span className="l">sujets</span>
-            </span>
-            <span className="mm">
-              <span className="v">{options.targetCards}</span>
-              <span className="l">fiches</span>
-            </span>
-            <span className="mm">
-              <span className="v">v1</span>
-              <span className="l">Kapsule</span>
-            </span>
-          </div>
-
           <div className="topbar-right">
-            <a className="site-link" href="https://paulmondou.fr/" title="Retourner sur paulmondou.fr">
-              paulmondou.fr
-            </a>
             <span className="status-pill">
               <span className="dot" />
               Pipeline OpenAI
@@ -382,6 +383,16 @@ function App() {
                 </button>
               </form>
             )}
+            <a
+              className="site-icon-link"
+              href="https://paulmondou.fr/"
+              target="_blank"
+              rel="noreferrer"
+              title="Aller sur paulmondou.fr"
+              aria-label="Aller sur paulmondou.fr"
+            >
+              <img src={paulmondouIcon} alt="" aria-hidden="true" />
+            </a>
           </div>
         </header>
 
@@ -534,25 +545,37 @@ function App() {
                 <h2>Sortie</h2>
                 <span className="hint">Plan intermediaire, validation et JSON Kapsule.</span>
               </div>
-              <div className="head-actions">
-                <button
-                  className="icon-btn"
-                  type="button"
-                  title="Copier le JSON"
-                  disabled={!deck}
-                  onClick={copyDeck}
-                >
-                  <Copy size={16} />
-                </button>
-                <button
-                  className="icon-btn"
-                  type="button"
-                  title="Telecharger le deck"
-                  disabled={!deck}
-                  onClick={downloadDeck}
-                >
-                  <Download size={16} />
-                </button>
+              <div className="surface-tools">
+                <div className="output-metrics" aria-label="Resume de sortie">
+                  <span className="mm">
+                    <span className="v">{topics.length}</span>
+                    <span className="l">sujets</span>
+                  </span>
+                  <span className="mm">
+                    <span className="v">{options.targetCards}</span>
+                    <span className="l">fiches</span>
+                  </span>
+                </div>
+                <div className="head-actions">
+                  <button
+                    className="icon-btn"
+                    type="button"
+                    title="Copier le JSON"
+                    disabled={!deck}
+                    onClick={copyDeck}
+                  >
+                    <Copy size={16} />
+                  </button>
+                  <button
+                    className="icon-btn"
+                    type="button"
+                    title="Telecharger le deck"
+                    disabled={!deck}
+                    onClick={downloadDeck}
+                  >
+                    <Download size={16} />
+                  </button>
+                </div>
               </div>
             </div>
 
