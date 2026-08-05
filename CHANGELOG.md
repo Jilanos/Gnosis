@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.6 - 2026-08-05
+
+- Replace the Gnosis favicon and app emblem with Icones V3 assets.
+- Replace the Kapsule and Paul Mondou navigation link icons with Icones V3 assets.
+- Record the Logics release contract for tagged production delivery.
+
 ## 1.1.3 - 2026-07-26
 
 - Use the release workflow's ephemeral GitHub token to authenticate the VPS to GHCR.

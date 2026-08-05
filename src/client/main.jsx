@@ -2,7 +2,6 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import {
   AlertTriangle,
-  Brain,
   CheckCircle2,
   Clock3,
   Copy,
@@ -18,10 +17,12 @@ import {
   Sun,
 } from "lucide-react";
 import packageJson from "../../package.json";
-import kapsuleIconDark from "./assets/kapsule-favicon-dark-mirrored.png";
-import kapsuleIconLight from "./assets/kapsule-favicon-light-mirrored.png";
-import paulmondouIconDark from "./assets/paulmondou-icon-dark-transparent.png";
-import paulmondouIconLight from "./assets/paulmondou-icon-light-transparent.png";
+import gnosisEmblemDark from "./assets/gnosis-emblem-dark.png";
+import gnosisEmblemLight from "./assets/gnosis-emblem-light.png";
+import kapsuleIconDark from "./assets/kapsule-icon-dark.png";
+import kapsuleIconLight from "./assets/kapsule-icon-light.png";
+import paulmondouIconDark from "./assets/paulmondou-icon-dark.png";
+import paulmondouIconLight from "./assets/paulmondou-icon-light.png";
 import "./styles.css";
 
 const DEFAULT_TOPICS = `DNS
@@ -202,8 +203,9 @@ function App() {
   const plan = state.result?.plan;
   const metrics = state.result?.metrics;
   const pipeline = state.result?.pipeline ?? [];
-  const kapsuleIcon = theme === "dark" ? kapsuleIconLight : kapsuleIconDark;
-  const paulmondouIcon = theme === "dark" ? paulmondouIconLight : paulmondouIconDark;
+  const gnosisEmblem = theme === "dark" ? gnosisEmblemDark : gnosisEmblemLight;
+  const kapsuleIcon = theme === "dark" ? kapsuleIconDark : kapsuleIconLight;
+  const paulmondouIcon = theme === "dark" ? paulmondouIconDark : paulmondouIconLight;
 
   async function generateDeck() {
     setCopied(false);
@@ -319,7 +321,7 @@ function App() {
         <header className="topbar">
           <div className="brand">
             <span className="brand-mark">
-              <Brain size={19} />
+              <img src={gnosisEmblem} alt="" aria-hidden="true" />
             </span>
             <div className="brand-copy">
               <div className="brand-line">

@@ -1,0 +1,288 @@
+{
+  "budgets": {
+    "max_docs": 16,
+    "max_docs_per_ref": 4
+  },
+  "changed_paths": [],
+  "command": "logics-manager sync context-pack req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3 item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3 task_006_orchestrer_l_integration_icones_v3_dans_gnosis --mode summary-only --profile normal --handoff",
+  "companion_docs": [
+    {
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule"
+        ],
+        "prod": [
+          "prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable"
+        ],
+        "req": [
+          "req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage"
+        ],
+        "task": [
+          "task_005_orchestrer_l_identite_commune_et_la_release_gnosis"
+        ]
+      },
+      "path": "logics/product/prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable.md",
+      "ref": "prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable",
+      "status": "Settled",
+      "title": "Gnosis avec identite commune et cle OpenAI reutilisable"
+    },
+    {
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3",
+          "item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3"
+        ],
+        "prod": [
+          "prod_004_identite_gnosis_alignee_sur_icones_v3"
+        ],
+        "req": [
+          "req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis"
+        ],
+        "task": [
+          "task_006_orchestrer_l_integration_icones_v3_dans_gnosis"
+        ]
+      },
+      "path": "logics/product/prod_004_identite_gnosis_alignee_sur_icones_v3.md",
+      "ref": "prod_004_identite_gnosis_alignee_sur_icones_v3",
+      "status": "Proposed",
+      "title": "Identite Gnosis alignee sur Icones V3"
+    }
+  ],
+  "docs": [
+    {
+      "ai_context": {
+        "keywords": "request-chain-scaffold, integrer les icones icones v3 et les liens kapsule paul mondou dans gnosis, development-ready",
+        "skip when": "The change is unrelated to this scaffolded request chain.",
+        "summary": "Integrer les icones Icones V3 et les liens Kapsule Paul Mondou dans Gnosis",
+        "use when": "You need to implement or review the scaffolded workflow for Integrer les icones Icones V3 et les liens Kapsule Paul Mondou dans Gnosis."
+      },
+      "kind": "request",
+      "linked_refs": {
+        "item": [
+          "item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3",
+          "item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3"
+        ],
+        "prod": [
+          "prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable",
+          "prod_004_identite_gnosis_alignee_sur_icones_v3"
+        ],
+        "req": [
+          "req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis"
+        ]
+      },
+      "path": "logics/request/req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis.md",
+      "ref": "req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis",
+      "schema_version": "1.0",
+      "status": "Draft",
+      "title": "Integrer les icones Icones V3 et les liens Kapsule Paul Mondou dans Gnosis"
+    },
+    {
+      "ai_context": {
+        "keywords": "scaffolded-backlog, remplacer favicon et embleme gnosis par icones v3, implementation-ready",
+        "skip when": "The change belongs to another backlog slice.",
+        "summary": "Remplacer favicon et embleme Gnosis par Icones V3",
+        "use when": "Implementing the scaffolded slice for Remplacer favicon et embleme Gnosis par Icones V3."
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3"
+        ],
+        "prod": [
+          "prod_004_identite_gnosis_alignee_sur_icones_v3"
+        ],
+        "req": [
+          "req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis"
+        ],
+        "task": [
+          "task_006_orchestrer_l_integration_icones_v3_dans_gnosis"
+        ]
+      },
+      "path": "logics/backlog/item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3.md",
+      "ref": "item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3",
+      "schema_version": "1.0",
+      "status": "Ready",
+      "title": "Remplacer favicon et embleme Gnosis par Icones V3"
+    },
+    {
+      "ai_context": {
+        "keywords": "scaffolded-backlog, remplacer les liens kapsule et paul mondou par les identites icones v3, implementation-ready",
+        "skip when": "The change belongs to another backlog slice.",
+        "summary": "Remplacer les liens Kapsule et Paul Mondou par les identites Icones V3",
+        "use when": "Implementing the scaffolded slice for Remplacer les liens Kapsule et Paul Mondou par les identites Icones V3."
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3"
+        ],
+        "prod": [
+          "prod_004_identite_gnosis_alignee_sur_icones_v3"
+        ],
+        "req": [
+          "req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis"
+        ],
+        "task": [
+          "task_006_orchestrer_l_integration_icones_v3_dans_gnosis"
+        ]
+      },
+      "path": "logics/backlog/item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3.md",
+      "ref": "item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3",
+      "schema_version": "1.0",
+      "status": "Ready",
+      "title": "Remplacer les liens Kapsule et Paul Mondou par les identites Icones V3"
+    },
+    {
+      "ai_context": {},
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_007_definir_et_migrer_le_coffre_openai_commun_aux_comptes_kapsule"
+        ],
+        "prod": [
+          "prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable"
+        ],
+        "req": [
+          "req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage"
+        ],
+        "task": [
+          "task_005_orchestrer_l_identite_commune_et_la_release_gnosis"
+        ]
+      },
+      "path": "logics/product/prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable.md",
+      "ref": "prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable",
+      "schema_version": "1.0",
+      "status": "Settled",
+      "title": "Gnosis avec identite commune et cle OpenAI reutilisable"
+    },
+    {
+      "ai_context": {
+        "keywords": "scaffolded-task, request-chain-scaffold, orchestration",
+        "skip when": "Working on one isolated sibling slice.",
+        "summary": "Orchestrer l'integration Icones V3 dans Gnosis",
+        "use when": "Coordinating implementation of a scaffolded request chain."
+      },
+      "kind": "task",
+      "linked_refs": {
+        "item": [
+          "item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3",
+          "item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3"
+        ],
+        "prod": [
+          "prod_004_identite_gnosis_alignee_sur_icones_v3"
+        ],
+        "req": [
+          "req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis"
+        ],
+        "task": [
+          "task_006_orchestrer_l_integration_icones_v3_dans_gnosis"
+        ]
+      },
+      "path": "logics/tasks/task_006_orchestrer_l_integration_icones_v3_dans_gnosis.md",
+      "ref": "task_006_orchestrer_l_integration_icones_v3_dans_gnosis",
+      "schema_version": "1.0",
+      "status": "Ready",
+      "title": "Orchestrer l'integration Icones V3 dans Gnosis"
+    },
+    {
+      "ai_context": {},
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3",
+          "item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3"
+        ],
+        "prod": [
+          "prod_004_identite_gnosis_alignee_sur_icones_v3"
+        ],
+        "req": [
+          "req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis"
+        ],
+        "task": [
+          "task_006_orchestrer_l_integration_icones_v3_dans_gnosis"
+        ]
+      },
+      "path": "logics/product/prod_004_identite_gnosis_alignee_sur_icones_v3.md",
+      "ref": "prod_004_identite_gnosis_alignee_sur_icones_v3",
+      "schema_version": "1.0",
+      "status": "Proposed",
+      "title": "Identite Gnosis alignee sur Icones V3"
+    }
+  ],
+  "estimates": {
+    "char_count": 6744,
+    "companion_doc_count": 2,
+    "doc_count": 6
+  },
+  "generated_at": "2026-08-05T14:47:39Z",
+  "handoff": {
+    "companion_doc_count": 2,
+    "enabled": true,
+    "source_refs": [
+      "req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis",
+      "item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3",
+      "item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3",
+      "task_006_orchestrer_l_integration_icones_v3_dans_gnosis"
+    ],
+    "validation_summary_count": 1
+  },
+  "i18n": {
+    "actions": [
+      "Choose the source locale for app-owned user-facing copy.",
+      "Run logics-manager i18n init --source-locale <locale>.",
+      "Route new UI copy through stable semantic keys."
+    ],
+    "applicable": null,
+    "configured": false,
+    "contract_path": "logics/i18n/contract.json",
+    "findings": [],
+    "next_action": "Run logics-manager i18n init --source-locale <locale> for a project that owns user-facing copy.",
+    "ok": true,
+    "state": "absent"
+  },
+  "mode": "summary-only",
+  "profile": "normal",
+  "ref": "req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis,item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3,item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3,task_006_orchestrer_l_integration_icones_v3_dans_gnosis",
+  "refs": [
+    "req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis",
+    "item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3",
+    "item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3",
+    "task_006_orchestrer_l_integration_icones_v3_dans_gnosis"
+  ],
+  "release": {
+    "blocking_reasons": [
+      "Missing logics/release/contract.json."
+    ],
+    "configured": false,
+    "contract_path": "logics/release/contract.json",
+    "guidance": [
+      "Release readiness must come from project-owned evidence, not conversational memory.",
+      "Use release status or validate before preparing or claiming release readiness.",
+      "Publication-oriented actions are explicit operator actions and are separate from safe read/validate actions."
+    ],
+    "next_action": "Run logics-manager release discover --write, then review and promote logics/release/contract.draft.json to logics/release/contract.json.",
+    "publication_actions": [
+      "GitHub release publication",
+      "external publication"
+    ],
+    "required_gates": [],
+    "safe_actions": [
+      "logics-manager release status",
+      "logics-manager release plan <version>",
+      "logics-manager release validate <version>"
+    ],
+    "state": "not_configured",
+    "target_version": null
+  },
+  "validation_summary": [
+    {
+      "items": [
+        "- (no validation recorded yet)"
+      ],
+      "path": "logics/tasks/task_006_orchestrer_l_integration_icones_v3_dans_gnosis.md",
+      "ref": "task_006_orchestrer_l_integration_icones_v3_dans_gnosis"
+    }
+  ]
+}

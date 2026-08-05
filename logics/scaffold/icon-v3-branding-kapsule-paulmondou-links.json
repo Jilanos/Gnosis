@@ -1,0 +1,114 @@
+{
+  "title": "Integrer les icones Icones V3 et les liens Kapsule Paul Mondou dans Gnosis",
+  "references": [
+    "Corpus externe Icones V3/gnosis/",
+    "Corpus externe Icones V3/kapsule/",
+    "Corpus externe Icones V3/paulmondou/",
+    "logics/product/prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable.md"
+  ],
+  "request": {
+    "complexity": "Medium",
+    "theme": "Branding",
+    "needs": [
+      "Utiliser les assets Gnosis du corpus Icones V3 pour l'icone d'onglet et l'embleme.",
+      "Remplacer les visuels des liens vers Kapsule et Paul Mondou avec les assets Icones V3 correspondants."
+    ],
+    "context": [
+      "Le dossier source est le corpus local Icones V3 fourni par l'operateur; les chemins references ici sont internes a ce corpus pour respecter les regles Logics.",
+      "Assets attendus: gnosis/gnosis-icon-light, gnosis/gnosis-icon-dark, gnosis/gnosis-emblem-light, gnosis/gnosis-emblem-dark, plus kapsule et paulmondou pour les liens.",
+      "Gnosis est connecte fonctionnellement a Kapsule; le lien Kapsule doit rester clair et non ambigu."
+    ],
+    "acceptance_criteria": [
+      "AC1: L'icone d'onglet Gnosis utilise l'asset Gnosis Icones V3.",
+      "AC2: L'embleme Gnosis visible dans l'interface utilise l'asset Gnosis Icones V3.",
+      "AC3: Le lien vers Kapsule utilise l'identite Kapsule Icones V3 et conserve sa cible fonctionnelle.",
+      "AC4: Le lien vers Paul Mondou utilise l'identite Paul Mondou Icones V3 et conserve sa cible parent.",
+      "AC5: Les assets necessaires sont integres au repo Gnosis et ne dependent pas du dossier local au runtime."
+    ]
+  },
+  "product": {
+    "title": "Identite Gnosis alignee sur Icones V3",
+    "overview": "Gnosis expose les assets Gnosis Icones V3 et des liens visuels coherents vers Kapsule et Paul Mondou.",
+    "goals": [
+      "Aligner l'onglet, l'embleme et les liens transverses sur Icones V3.",
+      "Preserver la comprehension du role de Kapsule dans le parcours Gnosis.",
+      "Limiter les changements a la marque, aux assets et aux liens."
+    ],
+    "non_goals": [
+      "Modifier le pipeline OpenAI ou la generation de decks.",
+      "Changer les modeles de compte, de coffre de cle ou d'authentification."
+    ]
+  },
+  "backlog_items": [
+    {
+      "title": "Remplacer favicon et embleme Gnosis par Icones V3",
+      "priority": "High - l'identite Gnosis doit etre visible des l'arrivee",
+      "complexity": "Medium",
+      "theme": "Branding",
+      "request_acs": [
+        "AC1",
+        "AC2",
+        "AC5"
+      ],
+      "problem": [
+        "Les surfaces de marque Gnosis doivent consommer les nouveaux assets sans couplage au dossier local."
+      ],
+      "scope_in": [
+        "Identifier favicon, manifest, metadata et composant d'embleme.",
+        "Copier les assets Gnosis Icones V3 dans les chemins publics ou source du repo.",
+        "Mettre a jour les references light/dark et verifier les formats png/svg existants."
+      ],
+      "scope_out": [
+        "Changer le layout principal hors remplacement d'assets.",
+        "Refondre la direction artistique au-dela du corpus Icones V3."
+      ],
+      "acceptance_criteria": [
+        "AC1: Le favicon et les metadata d'onglet resolvent l'icone Gnosis Icones V3.",
+        "AC2: L'embleme Gnosis affiche l'asset Icones V3 adapte au theme courant.",
+        "AC3: Les assets references existent dans le repo et passent la validation locale pertinente."
+      ]
+    },
+    {
+      "title": "Remplacer les liens Kapsule et Paul Mondou par les identites Icones V3",
+      "priority": "High - les liens transverses structurent le parcours entre applications",
+      "complexity": "Medium",
+      "theme": "Navigation",
+      "request_acs": [
+        "AC3",
+        "AC4",
+        "AC5"
+      ],
+      "problem": [
+        "Les liens vers Kapsule et Paul Mondou doivent etre visuellement coherents avec le nouveau systeme d'icones."
+      ],
+      "scope_in": [
+        "Localiser les liens Kapsule et Paul Mondou dans la navigation, le header ou le footer.",
+        "Copier les assets Kapsule et Paul Mondou necessaires depuis Icones V3.",
+        "Preserver les URL, libelles accessibles et etats clavier."
+      ],
+      "scope_out": [
+        "Ajouter de nouveaux liens enfants non demandes.",
+        "Modifier le comportement de generation ou d'export vers Kapsule."
+      ],
+      "acceptance_criteria": [
+        "AC1: Le lien Kapsule utilise un visuel Kapsule Icones V3 et conserve sa destination.",
+        "AC2: Le lien Paul Mondou utilise un visuel Paul Mondou Icones V3 et conserve sa destination.",
+        "AC3: Les liens restent accessibles, lisibles et verifies sur mobile et desktop."
+      ]
+    }
+  ],
+  "orchestration_task": {
+    "title": "Orchestrer l'integration Icones V3 dans Gnosis",
+    "plan": [
+      "Inventorier favicon, manifest, embleme et liens transverses existants dans Gnosis.",
+      "Integrer les assets Icones V3 Gnosis, Kapsule et Paul Mondou dans le repo.",
+      "Mettre a jour les composants et metadata sans changer les parcours metier.",
+      "Verifier accessibilite, rendu responsive, build et preparation release."
+    ]
+  },
+  "context_pack": {
+    "out": "logics/context-packs/icon-v3-branding-kapsule-paulmondou-links.json",
+    "mode": "summary-only",
+    "profile": "normal"
+  }
+}
