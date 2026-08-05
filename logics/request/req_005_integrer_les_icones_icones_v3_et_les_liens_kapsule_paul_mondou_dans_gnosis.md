@@ -1,7 +1,7 @@
 ## req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis - Integrer les icones Icones V3 et les liens Kapsule Paul Mondou dans Gnosis
 > From version: 1.1.5
 > Schema version: 1.0
-> Status: Draft
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
 > Complexity: Medium

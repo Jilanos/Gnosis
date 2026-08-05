@@ -13,7 +13,7 @@
 | [prod_001_gnosis_product_brief](product/prod_001_gnosis_product_brief.md) | Gnosis product brief | Proposed |  |  | product/prod_001_gnosis_product_brief.md |
 | [prod_002_fiabilisation_de_la_generation_gnosis](product/prod_002_fiabilisation_de_la_generation_gnosis.md) | Fiabilisation de la generation Gnosis | Proposed |  |  | product/prod_002_fiabilisation_de_la_generation_gnosis.md |
 | [prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable](product/prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable.md) | Gnosis avec identite commune et cle OpenAI reutilisable | Settled |  |  | product/prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable.md |
-| [prod_004_identite_gnosis_alignee_sur_icones_v3](product/prod_004_identite_gnosis_alignee_sur_icones_v3.md) | Identite Gnosis alignee sur Icones V3 | Proposed |  |  | product/prod_004_identite_gnosis_alignee_sur_icones_v3.md |
+| [prod_004_identite_gnosis_alignee_sur_icones_v3](product/prod_004_identite_gnosis_alignee_sur_icones_v3.md) | Identite Gnosis alignee sur Icones V3 | Settled |  |  | product/prod_004_identite_gnosis_alignee_sur_icones_v3.md |
 
 ## Roadmaps
 
@@ -28,7 +28,7 @@ _None_
 | [req_002_repondre_a_l_audit_technique_gnosis_du_2026_07_23](request/req_002_repondre_a_l_audit_technique_gnosis_du_2026_07_23.md) | Repondre a l'audit technique Gnosis du 2026-07-23 | Done |  |  | request/req_002_repondre_a_l_audit_technique_gnosis_du_2026_07_23.md |
 | [req_003_remedier_aux_constats_de_l_audit_technique_2026_07_25](request/req_003_remedier_aux_constats_de_l_audit_technique_2026_07_25.md) | Remedier aux constats de l'audit technique 2026-07-25 | Done |  |  | request/req_003_remedier_aux_constats_de_l_audit_technique_2026_07_25.md |
 | [req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage](request/req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage.md) | Federer Gnosis aux comptes communs et au coffre OpenAI partage | Done |  |  | request/req_004_federer_gnosis_aux_comptes_communs_et_au_coffre_openai_partage.md |
-| [req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis](request/req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis.md) | Integrer les icones Icones V3 et les liens Kapsule Paul Mondou dans Gnosis | Draft |  |  | request/req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis.md |
+| [req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis](request/req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis.md) | Integrer les icones Icones V3 et les liens Kapsule Paul Mondou dans Gnosis | Done |  |  | request/req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis.md |
 
 ## Backlog
 
@@ -44,8 +44,8 @@ _None_
 | [item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle](backlog/item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle.md) | Integrer Gnosis a l identite commune et a la resolution de cle | Done |  | 100% | backlog/item_008_integrer_gnosis_a_l_identite_commune_et_a_la_resolution_de_cle.md |
 | [item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation](backlog/item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation.md) | Adapter l interface Gnosis pour la cle, la version et la navigation | Done |  | 100% | backlog/item_009_adapter_l_interface_gnosis_pour_la_cle_la_version_et_la_navigation.md |
 | [item_010_preparer_publier_et_verifier_la_release_gnosis](backlog/item_010_preparer_publier_et_verifier_la_release_gnosis.md) | Preparer, publier et verifier la release Gnosis | Done |  | 100% | backlog/item_010_preparer_publier_et_verifier_la_release_gnosis.md |
-| [item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3](backlog/item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3.md) | Remplacer favicon et embleme Gnosis par Icones V3 | Ready |  | 0% | backlog/item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3.md |
-| [item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3](backlog/item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3.md) | Remplacer les liens Kapsule et Paul Mondou par les identites Icones V3 | Ready |  | 0% | backlog/item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3.md |
+| [item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3](backlog/item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3.md) | Remplacer favicon et embleme Gnosis par Icones V3 | Done |  | 100% | backlog/item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3.md |
+| [item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3](backlog/item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3.md) | Remplacer les liens Kapsule et Paul Mondou par les identites Icones V3 | Done |  | 100% | backlog/item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3.md |
 
 ## Tasks
 
@@ -56,4 +56,4 @@ _None_
 | [task_003_repondre_a_l_audit_technique_gnosis_du_2026_07_23](tasks/task_003_repondre_a_l_audit_technique_gnosis_du_2026_07_23.md) | Repondre a l'audit technique Gnosis du 2026-07-23 | Done | codex | 100% | tasks/task_003_repondre_a_l_audit_technique_gnosis_du_2026_07_23.md |
 | [task_004_orchestrer_la_remediation_de_l_audit_gnosis](tasks/task_004_orchestrer_la_remediation_de_l_audit_gnosis.md) | Orchestrer la remediation de l'audit Gnosis | Done | codex | 100% | tasks/task_004_orchestrer_la_remediation_de_l_audit_gnosis.md |
 | [task_005_orchestrer_l_identite_commune_et_la_release_gnosis](tasks/task_005_orchestrer_l_identite_commune_et_la_release_gnosis.md) | Orchestrer l identite commune et la release Gnosis | Done | codex | 100% | tasks/task_005_orchestrer_l_identite_commune_et_la_release_gnosis.md |
-| [task_006_orchestrer_l_integration_icones_v3_dans_gnosis](tasks/task_006_orchestrer_l_integration_icones_v3_dans_gnosis.md) | Orchestrer l'integration Icones V3 dans Gnosis | Ready |  | 0% | tasks/task_006_orchestrer_l_integration_icones_v3_dans_gnosis.md |
+| [task_006_orchestrer_l_integration_icones_v3_dans_gnosis](tasks/task_006_orchestrer_l_integration_icones_v3_dans_gnosis.md) | Orchestrer l'integration Icones V3 dans Gnosis | Done | Codex | 100% | tasks/task_006_orchestrer_l_integration_icones_v3_dans_gnosis.md |

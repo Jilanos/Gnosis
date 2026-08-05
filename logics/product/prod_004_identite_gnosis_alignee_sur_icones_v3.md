@@ -1,8 +1,8 @@
 ## prod_004_identite_gnosis_alignee_sur_icones_v3 - Identite Gnosis alignee sur Icones V3
 > Date: 2026-08-05
-> Status: Proposed
+> Status: Settled
 > Related request: `req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis`
-> Related backlog: `item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3`, `item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3`
+> Related backlog: `item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3`
 > Related task: `task_006_orchestrer_l_integration_icones_v3_dans_gnosis`
 > Related architecture: (none yet)
 > Reminder: Update status, linked refs, scope, decisions, success signals, and open questions when you edit this doc.
@@ -47,5 +47,5 @@ flowchart LR
 - Context-pack output can be handed to an implementation agent directly.
 
 # References
-- Product back-reference: `req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis`
+- Product back-reference: `item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3`
 - Task back-reference: `task_006_orchestrer_l_integration_icones_v3_dans_gnosis`

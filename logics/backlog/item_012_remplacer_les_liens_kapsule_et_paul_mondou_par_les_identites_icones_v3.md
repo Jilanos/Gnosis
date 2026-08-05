@@ -1,10 +1,10 @@
 ## item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3 - Remplacer les liens Kapsule et Paul Mondou par les identites Icones V3
 > From version: 1.1.5
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 10%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Navigation
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
@@ -50,3 +50,9 @@
 # Priority
 - Priority: High - les liens transverses structurent le parcours entre applications
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_006_orchestrer_l_integration_icones_v3_dans_gnosis`
+
+# Notes
+- Task `task_006_orchestrer_l_integration_icones_v3_dans_gnosis` was finished via `logics-manager flow finish task` on 2026-08-05.

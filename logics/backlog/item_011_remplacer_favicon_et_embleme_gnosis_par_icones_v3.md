@@ -1,10 +1,10 @@
 ## item_011_remplacer_favicon_et_embleme_gnosis_par_icones_v3 - Remplacer favicon et embleme Gnosis par Icones V3
 > From version: 1.1.5
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 10%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Branding
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
@@ -30,6 +30,7 @@
 - request-AC1 -> This backlog slice. Proof: AC1: Le favicon et les metadata d'onglet resolvent l'icone Gnosis Icones V3.
 - request-AC2 -> This backlog slice. Proof: AC2: L'embleme Gnosis affiche l'asset Icones V3 adapte au theme courant.
 - request-AC5 -> This backlog slice. Proof: AC3: Les assets references existent dans le repo et passent la validation locale pertinente.
+- request-AC4 -> This backlog slice. Evidence needed: Le lien vers Paul Mondou utilise l'identite Paul Mondou Icones V3 et conserve sa cible parent.
 
 # Decision framing
 - Product framing: Not needed
@@ -50,3 +51,9 @@
 # Priority
 - Priority: High - l'identite Gnosis doit etre visible des l'arrivee
 - Rationale: Set by scaffold input or defaulted for grooming.
+
+# Tasks
+- `task_006_orchestrer_l_integration_icones_v3_dans_gnosis`
+
+# Notes
+- Task `task_006_orchestrer_l_integration_icones_v3_dans_gnosis` was finished via `logics-manager flow finish task` on 2026-08-05.
