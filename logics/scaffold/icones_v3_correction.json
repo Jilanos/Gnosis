@@ -1,0 +1,120 @@
+{
+  "title": "Remplacer les assets Gnosis par les masters Icones V3 corriges",
+  "references": [
+    "WORK/perso/Icones V3/"
+  ],
+  "request": {
+    "complexity": "High",
+    "theme": "Brand asset integration",
+    "needs": [
+      "Remplacer les douze PNG de `src/client/assets/` par les masters corriges, en dupliquant le master unique sur les variantes dark et light."
+    ],
+    "context": [
+      "Les masters approuves sont dans `WORK/perso/Icones V3`, tous en PNG RGBA 1024x1024.",
+      "Le suffixe de variante designe le contour: `-dark` porte un lisere pale et se pose sur fond sombre, `-light` porte un contour navy et se pose sur fond clair.",
+      "Le lot Icones V3 precedemment integre reposait sur de mauvaises images: ce corpus corrige la source, pas la demarche.",
+      "Certaines marques n'ont qu'un ou deux masters (Gnosis, Paul Mondou, Kapsule, F1 Datas). Consigne operateur: reutiliser ce master unique pour l'embleme comme pour l'icone.",
+      "Les quatorze masters sont a fond transparent: coins a alpha=0 et 28% a 87% de pixels transparents selon l'asset. Consigne operateur: ne rien ajouter derriere, ni en favicon ni en embleme.",
+      "Gnosis ne dispose que d'un seul master `gnosis/gnosis.png`, a utiliser pour l'embleme comme pour l'icone.",
+      "Les emplacements dark et light recevront donc des contenus identiques: c'est la consigne operateur, pas un oubli.",
+      "Fusionner ces paires en un fichier unique reste possible mais reste hors perimetre pour limiter le churn de references."
+    ],
+    "acceptance_criteria": [
+      "AC1: Chaque fichier d'icone livre est octet pour octet le master correspondant de Icones V3.",
+      "AC2: Aucune reference d'asset n'est cassee apres remplacement, extensions et types MIME inclus.",
+      "AC3: Le rendu est verifie visuellement sur le theme reellement servi par l'application.",
+      "AC4: La transparence des masters est preservee: aucun fond, plaque ou cartouche n'est ajoute derriere l'asset, favicon et embleme compris.",
+      "AC5: La livraison se termine par un commit de version X.Y.Z+1, un push, puis un tag annote vX.Y.Z+1 dont le workflow release est vert."
+    ]
+  },
+  "product": {
+    "title": "Identite Gnosis alignee sur Icones V3 corrige",
+    "overview": "Les assets Gnosis, Kapsule et Paul Mondou servis par le client doivent venir des masters approuves.",
+    "goals": [
+      "Supprimer toute trace du lot d'images errone.",
+      "Conserver les noms de fichiers pour eviter une refonte des imports."
+    ],
+    "non_goals": [
+      "Fusionner les variantes dark/light en un asset unique."
+    ]
+  },
+  "backlog_items": [
+    {
+      "title": "Remplacer les douze assets client Gnosis",
+      "priority": "High",
+      "complexity": "Medium",
+      "theme": "Brand asset integration",
+      "request_acs": [
+        "AC1",
+        "AC2",
+        "AC3",
+        "AC4"
+      ],
+      "problem": [
+        "Les assets embarques par le client Vite proviennent d'un lot errone."
+      ],
+      "scope_in": [
+        "`gnosis-emblem-dark.png` et `gnosis-emblem-light.png` depuis `gnosis/gnosis.png`",
+        "`gnosis-icon-dark.png` et `gnosis-icon-light.png` depuis `gnosis/gnosis.png`",
+        "`kapsule-icon-dark.png`, `kapsule-icon-light.png`, `kapsule-favicon-dark-mirrored.png` et `kapsule-favicon-light-mirrored.png` depuis `kapsule/kapsule-icon.png`",
+        "`paulmondou-icon-dark.png`, `paulmondou-icon-light.png`, `paulmondou-icon-dark-transparent.png` et `paulmondou-icon-light-transparent.png` depuis `paulmondou/paulmondou-emblem.png`"
+      ],
+      "scope_out": [
+        "Editer `dist/`: sortie de build aux noms hashes, regeneree par la CI.",
+        "Renommer ou fusionner les variantes dark/light.",
+        "Ajouter un fond, une plaque de couleur ou un cartouche derriere un asset transparent."
+      ],
+      "acceptance_criteria": [
+        "AC1: Les douze fichiers correspondent aux masters attendus.",
+        "AC2: Aucun import de `src/client` n'est casse et le favicon reste resolu.",
+        "AC3: Embleme et icone s'affichent correctement dans les deux themes du client."
+      ]
+    },
+    {
+      "title": "Publier la version 1.1.8 apres remplacement des assets",
+      "priority": "High",
+      "complexity": "Low",
+      "theme": "Release delivery",
+      "request_acs": [
+        "AC5"
+      ],
+      "problem": [
+        "Sans commit de version ni tag, les nouveaux assets restent non deployes: le tag `v1.1.8` est le seul declencheur du deploiement."
+      ],
+      "scope_in": [
+        "Incrementer `package.json`, la racine de `package-lock.json` et `CHANGELOG.md` de `1.1.7` vers `1.1.8`",
+        "Commit `Prepare ... v1.1.8` puis push sur `main`",
+        "Attente du CI vert sur ce commit exact avant tout tag",
+        "Tag annote `v1.1.8` pousse, puis verification des jobs validate, publish, deploy et release"
+      ],
+      "scope_out": [
+        "Taguer avant que le CI requis ne soit vert.",
+        "Retaguer une release existante ou forcer un push sur la branche de release."
+      ],
+      "acceptance_criteria": [
+        "AC1: Toutes les surfaces canoniques declarent `1.1.8`.",
+        "AC2: Le tag annote `v1.1.8` pointe sur le commit de version pousse sur `main`.",
+        "AC3: Le workflow release est vert sur validate, publish, deploy et release.",
+        "AC4: Le SHA, le tag et l'URL du run sont consignes dans le closeout de la tache."
+      ]
+    }
+  ],
+  "orchestration_task": {
+    "title": "Remplacer les assets Gnosis par les masters Icones V3 corriges",
+    "plan": [
+      "Copier le master Gnosis sur les quatre emplacements embleme et icone.",
+      "Copier les masters Kapsule et Paul Mondou sur leurs huit emplacements.",
+      "Rebuilder le client et verifier que `dist/` reprend les nouveaux assets.",
+      "Controler le rendu dans les deux themes.",
+      "Preparer la version `1.1.7` -> `1.1.8` dans `package.json`, la racine de `package-lock.json` et `CHANGELOG.md`.",
+      "Committer `Prepare ... v1.1.8`, pousser sur `main` et attendre le CI vert sur ce commit.",
+      "Creer et pousser le tag annote `v1.1.8`, puis verifier les quatre jobs du workflow release.",
+      "Consigner SHA, tag et URL du run dans le closeout."
+    ]
+  },
+  "context_pack": {
+    "out": "logics/context-packs/icones_v3_correction.md",
+    "mode": "diff-first",
+    "profile": "normal"
+  }
+}

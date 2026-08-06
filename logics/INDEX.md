@@ -15,6 +15,7 @@
 | [prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable](product/prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable.md) | Gnosis avec identite commune et cle OpenAI reutilisable | Settled |  |  | product/prod_003_gnosis_avec_identite_commune_et_cle_openai_reutilisable.md |
 | [prod_004_identite_gnosis_alignee_sur_icones_v3](product/prod_004_identite_gnosis_alignee_sur_icones_v3.md) | Identite Gnosis alignee sur Icones V3 | Settled |  |  | product/prod_004_identite_gnosis_alignee_sur_icones_v3.md |
 | [prod_005_publier_les_derniers_assets_icones_v3_gnosis](product/prod_005_publier_les_derniers_assets_icones_v3_gnosis.md) | Publier les derniers assets Icones V3 Gnosis | Proposed |  |  | product/prod_005_publier_les_derniers_assets_icones_v3_gnosis.md |
+| [prod_006_identite_gnosis_alignee_sur_icones_v3_corrige](product/prod_006_identite_gnosis_alignee_sur_icones_v3_corrige.md) | Identite Gnosis alignee sur Icones V3 corrige | Proposed |  |  | product/prod_006_identite_gnosis_alignee_sur_icones_v3_corrige.md |
 
 ## Roadmaps
 
@@ -32,6 +33,7 @@ _None_
 | [req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis](request/req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis.md) | Integrer les icones Icones V3 et les liens Kapsule Paul Mondou dans Gnosis | Done |  |  | request/req_005_integrer_les_icones_icones_v3_et_les_liens_kapsule_paul_mondou_dans_gnosis.md |
 | [req_006_publier_les_derniers_assets_icones_v3_gnosis](request/req_006_publier_les_derniers_assets_icones_v3_gnosis.md) | Publier les derniers assets Icones V3 Gnosis | Done |  |  | request/req_006_publier_les_derniers_assets_icones_v3_gnosis.md |
 | [req_007_publier_la_release_patch_v1_1_7_de_gnosis](request/req_007_publier_la_release_patch_v1_1_7_de_gnosis.md) | Publier la release patch v1.1.7 de Gnosis | Done |  |  | request/req_007_publier_la_release_patch_v1_1_7_de_gnosis.md |
+| [req_008_remplacer_les_assets_gnosis_par_les_masters_icones_v3_corriges](request/req_008_remplacer_les_assets_gnosis_par_les_masters_icones_v3_corriges.md) | Remplacer les assets Gnosis par les masters Icones V3 corriges | Draft |  |  | request/req_008_remplacer_les_assets_gnosis_par_les_masters_icones_v3_corriges.md |
 
 ## Backlog
 
@@ -51,6 +53,8 @@ _None_
 | [item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3](backlog/item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3.md) | Remplacer les liens Kapsule et Paul Mondou par les identites Icones V3 | Done |  | 100% | backlog/item_012_remplacer_les_liens_kapsule_et_paul_mondou_par_les_identites_icones_v3.md |
 | [item_013_publier_les_derniers_assets_icones_v3_gnosis](backlog/item_013_publier_les_derniers_assets_icones_v3_gnosis.md) | Publier les derniers assets Icones V3 Gnosis | Done |  | 100% | backlog/item_013_publier_les_derniers_assets_icones_v3_gnosis.md |
 | [item_014_publier_la_release_patch_v1_1_7_de_gnosis](backlog/item_014_publier_la_release_patch_v1_1_7_de_gnosis.md) | Publier la release patch v1.1.7 de Gnosis | Done |  | 100% | backlog/item_014_publier_la_release_patch_v1_1_7_de_gnosis.md |
+| [item_015_remplacer_les_douze_assets_client_gnosis](backlog/item_015_remplacer_les_douze_assets_client_gnosis.md) | Remplacer les douze assets client Gnosis | Ready |  | 0% | backlog/item_015_remplacer_les_douze_assets_client_gnosis.md |
+| [item_016_publier_la_version_1_1_8_apres_remplacement_des_assets](backlog/item_016_publier_la_version_1_1_8_apres_remplacement_des_assets.md) | Publier la version 1.1.8 apres remplacement des assets | Ready |  | 0% | backlog/item_016_publier_la_version_1_1_8_apres_remplacement_des_assets.md |
 
 ## Tasks
 
@@ -64,3 +68,4 @@ _None_
 | [task_006_orchestrer_l_integration_icones_v3_dans_gnosis](tasks/task_006_orchestrer_l_integration_icones_v3_dans_gnosis.md) | Orchestrer l'integration Icones V3 dans Gnosis | Done | Codex | 100% | tasks/task_006_orchestrer_l_integration_icones_v3_dans_gnosis.md |
 | [task_007_publier_les_derniers_assets_icones_v3_gnosis](tasks/task_007_publier_les_derniers_assets_icones_v3_gnosis.md) | Publier les derniers assets Icones V3 Gnosis | Done | codex | 100% | tasks/task_007_publier_les_derniers_assets_icones_v3_gnosis.md |
 | [task_008_publier_la_release_patch_v1_1_7_de_gnosis](tasks/task_008_publier_la_release_patch_v1_1_7_de_gnosis.md) | Publier la release patch v1.1.7 de Gnosis | Done | Claude | 100% | tasks/task_008_publier_la_release_patch_v1_1_7_de_gnosis.md |
+| [task_009_remplacer_les_assets_gnosis_par_les_masters_icones_v3_corriges](tasks/task_009_remplacer_les_assets_gnosis_par_les_masters_icones_v3_corriges.md) | Remplacer les assets Gnosis par les masters Icones V3 corriges | Ready |  | 0% | tasks/task_009_remplacer_les_assets_gnosis_par_les_masters_icones_v3_corriges.md |
