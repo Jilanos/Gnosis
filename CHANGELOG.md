@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.7 - 2026-08-06
+
+- Document the published Icones V3 assets in the Logics workflow records; no runtime change.
+
 ## 1.1.6 - 2026-08-05
 
 - Replace the Gnosis favicon and app emblem with Icones V3 assets.
