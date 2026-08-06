@@ -1,10 +1,10 @@
 ## item_015_remplacer_les_douze_assets_client_gnosis - Remplacer les douze assets client Gnosis
 > From version: 1.1.7
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 60%
 > Complexity: Medium
 > Theme: Brand asset integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
