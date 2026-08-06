@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.8 - 2026-08-06
+
+- Replace the Gnosis, Kapsule and Paul Mondou client assets with the corrected Icones V3 masters.
+- Reuse the single Gnosis master for both the emblem and the icon, in each theme variant.
+- Downscale every asset to its display size, cutting the bundled assets from 7.8 MB to 626 kB.
+
 ## 1.1.7 - 2026-08-06
 
 - Document the published Icones V3 assets in the Logics workflow records; no runtime change.
