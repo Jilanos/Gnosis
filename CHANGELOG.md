@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0 - 2026-08-07
+
+- Remove the target card count from the API contract, the pipeline prompts and the mock: the plan now derives the minimal number of cards from the pedagogical coverage.
+- Add a planning contract to the plan schema: card origin, source topic, autonomy reason, plus a plan summary listing merged topics, justified prerequisites and rejected extensions.
+- Accept `low` / `medium` / `advanced` as level aliases and make the level the only explicit pedagogical intensity; the manual density option is gone.
+- Keep `MAX_CARDS` as a technical ceiling only, traced in the plan summary when it truncates.
+- Show the planning summary in the client and drop the target-card and density controls from the form.
+
 ## 1.1.9 - 2026-08-07
 
 - Fix the initial client render by importing the `Brain` Lucide icon used by the empty state.
