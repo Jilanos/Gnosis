@@ -9,6 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: Claude
+> Indicators reviewed: 2026-08-07
 
 # Definition of Done (DoD)
 - [x] The backlog scope is implemented.
@@ -47,6 +48,9 @@
 # Report
 - Cause: l'etage runtime tourne en `USER node` alors que `/app` appartient a root et que `/app/data` n'existe pas; un volume monte sur ce chemin heritait donc d'un proprietaire root.
 - Correctif limite a l'image: creation et attribution de `/app/data`, plus exclusion de `data` du contexte de build. Aucun changement du code serveur.
+- Release 1.2.1 livree: correctif `123d98c`, preparation `e13a1d0`, push `55b7ec6..e13a1d0`, CI run 31200258492 verte sur `e13a1d0`.
+- Tag annote `v1.2.1`; workflow Release by tag 31200408869 success; `/api/health` en production renvoie `v1.2.1`.
+- Preuves enregistrees dans `logics/release/evidence.jsonl`.
 - Finished on 2026-08-07.
 - Linked backlog item(s): `item_020_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production`
 - Related request(s): `req_011_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production`
