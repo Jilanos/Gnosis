@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.1 - 2026-08-07
+
+- Create `/app/data` in the runtime image and give it to the `node` user, so generation jobs can be persisted instead of failing with `EACCES: permission denied, mkdir '/app/data'`.
+- Exclude `data` from the Docker build context.
+
 ## 1.2.0 - 2026-08-07
 
 - Remove the target card count from the API contract, the pipeline prompts and the mock: the plan now derives the minimal number of cards from the pedagogical coverage.
