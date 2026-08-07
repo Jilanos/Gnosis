@@ -58,6 +58,10 @@ Configuration attendue :
 - `OPENAI_MODEL`
 - `MAX_CARDS` (plafond technique de fiches, pas une cible pedagogique)
 - `MAX_INPUT_TOPICS`
+- `OPENAI_DECK_BATCH_SIZE` (fiches par appel de redaction, 1 par defaut; 3 a valider contre l'API)
+- `OPENAI_MAX_OUTPUT_TOKENS` (budget de sortie par fiche)
+- `OPENAI_REASONING_EFFORT` (`minimal`, `low`, `medium`, `high`; non transmis si absent)
+- `GNOSIS_TOKEN_BUDGET` (arret propre au-dela de N tokens; 0 = pas de borne)
 
 ### Schemas
 
@@ -138,6 +142,20 @@ Sortie attendue :
 - duree estimee,
 - niveau,
 - notions couvertes.
+
+### Cout d'une generation
+
+Chaque appel structure enregistre le `usage` renvoye par l'API : tokens d'entree,
+d'entree en cache, de sortie et de raisonnement. La consommation est agregee par
+etape, attachee au job au fil de l'eau et exposee dans le resultat, y compris
+quand la generation echoue ou est annulee.
+
+Leviers de cout appliques :
+
+- l'etape Fiches ne recoit que l'expansion des familles couvertes par le lot,
+- les fiches sont redigees par lots (`OPENAI_DECK_BATCH_SIZE`),
+- l'effort de raisonnement est transmis seulement s'il est configure,
+- `GNOSIS_TOKEN_BUDGET` arrete la generation avant depassement.
 
 ### Deck Kapsule
 

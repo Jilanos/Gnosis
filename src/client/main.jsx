@@ -5,6 +5,7 @@ import {
   Brain,
   CheckCircle2,
   Clock3,
+  Coins,
   Copy,
   Download,
   KeyRound,
@@ -214,6 +215,7 @@ function App() {
     setState({ status: "loading" });
     const controller = new AbortController();
     let jobId;
+    let lastJob;
     const timeout = window.setTimeout(() => controller.abort(), GENERATION_TIMEOUT_MS);
     try {
       const response = await fetch("/api/generate-deck", {
@@ -239,7 +241,8 @@ function App() {
         await new Promise((resolve) => window.setTimeout(resolve, 700));
         const jobResponse = await fetch(`/api/generate-deck/${jobId}`, { signal: controller.signal });
         const job = await jobResponse.json();
-        setState({ status: job.status === "completed" ? "loading" : "loading", job });
+        lastJob = job;
+        setState({ status: "loading", job });
         if (job.status === "completed") {
           setState({ status: "done", result: job.result });
           break;
@@ -257,7 +260,7 @@ function App() {
           headers: session.csrfToken ? { "x-csrf-token": session.csrfToken } : {},
         });
       }
-      setState({ status: "error", error: message });
+      setState({ status: "error", error: message, usage: lastJob?.usage });
     } finally {
       window.clearTimeout(timeout);
     }
@@ -567,13 +570,14 @@ function App() {
             <div className="scroll">
               {state.status === "idle" && <EmptyState />}
               {state.status === "loading" && <LoadingState job={state.job} />}
-              {state.status === "error" && <ErrorState message={state.error} />}
+              {state.status === "error" && <ErrorState message={state.error} usage={state.usage} />}
               {state.status === "done" && (
                 <DeckResult
                   deck={deck}
                   plan={plan}
                   metrics={metrics}
                   pipeline={pipeline}
+                  usage={state.result.usage}
                   validation={state.result.validation}
                   copied={copied}
                 />
@@ -615,12 +619,47 @@ function LoadingState({ job }) {
   );
 }
 
-function ErrorState({ message }) {
+function ErrorState({ message, usage }) {
   return (
     <div className="state is-error">
       <AlertTriangle size={32} />
       <h3>Generation interrompue</h3>
       <p>{message}</p>
+      {usage?.totals?.totalTokens > 0 && (
+        <p className="spent">
+          Consommation deja engagee : {formatTokens(usage.totals.totalTokens)} tokens.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function formatTokens(value) {
+  return new Intl.NumberFormat("fr-FR").format(value ?? 0);
+}
+
+function UsagePanel({ usage }) {
+  if (!usage?.totals?.totalTokens) return null;
+  const { totals, stages } = usage;
+  return (
+    <div className="panel usage">
+      <div className="metrics-head">
+        <h3>Consommation</h3>
+        <span className="total">
+          <Coins size={14} />
+          {formatTokens(totals.totalTokens)} tokens / {totals.calls} appels
+        </span>
+      </div>
+      <div className="mlist">
+        {stages.map((stage) => (
+          <div key={stage.name} className="mrow">
+            <strong>{stage.name}</strong>
+            <span className="m">{formatTokens(stage.inputTokens)} entree</span>
+            <span className="m">{formatTokens(stage.outputTokens)} sortie</span>
+            <span className="m">{formatTokens(stage.reasoningTokens)} raisonnement</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -658,7 +697,7 @@ function PlanSummary({ plan }) {
   );
 }
 
-function DeckResult({ deck, plan, metrics, pipeline, validation, copied }) {
+function DeckResult({ deck, plan, metrics, pipeline, usage, validation, copied }) {
   return (
     <div className="deck-result">
       <div className="banner">
@@ -732,6 +771,8 @@ function DeckResult({ deck, plan, metrics, pipeline, validation, copied }) {
           </div>
         </div>
       )}
+
+      <UsagePanel usage={usage} />
 
       <pre className="json">{JSON.stringify(deck, null, 2)}</pre>
     </div>

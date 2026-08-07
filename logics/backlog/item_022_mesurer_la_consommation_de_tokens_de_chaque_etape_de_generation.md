@@ -1,10 +1,10 @@
 ## item_022_mesurer_la_consommation_de_tokens_de_chaque_etape_de_generation - Mesurer la consommation de tokens de chaque etape de generation
 > From version: 1.2.2
 > Schema version: 1.0
-> Status: Ready
+> Status: In progress
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 0%
+> Progress: 85%
 > Complexity: Medium
 > Theme: Generation cost
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.

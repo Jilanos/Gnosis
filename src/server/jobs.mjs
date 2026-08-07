@@ -80,6 +80,11 @@ export function createJobManager(env = process.env) {
           job.progress = progress;
           void persist();
         },
+        // La consommation est attachee au job au fil de l'eau: un job echoue ou
+        // annule doit garder la trace de ce qui a deja ete paye.
+        onUsage(usage) {
+          job.usage = usage;
+        },
       });
       job.status = "completed";
       job.progress = 100;

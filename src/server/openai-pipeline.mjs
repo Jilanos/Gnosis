@@ -9,6 +9,7 @@ import {
 import { applyCalculatedDurations, estimateDeckMetrics } from "./card-metrics.mjs";
 import { createMockPipeline } from "./mock-pipeline.mjs";
 import { assertDeck, validateDeck, validationSummary } from "./validation.mjs";
+import { createUsageCollector, readUsage } from "./usage-metrics.mjs";
 import { slugify, uniqueSlug } from "./utils.mjs";
 
 const DEFAULT_OPENAI_MODEL = "gpt-5.6";
@@ -17,7 +18,11 @@ const DEFAULT_OPENAI_MODEL = "gpt-5.6";
 const DEFAULT_OPENAI_TIMEOUT_MS = 240_000;
 const DEFAULT_OPENAI_MAX_RETRIES = 1;
 const DEFAULT_MAX_OUTPUT_TOKENS = 12_000;
+// Regrouper les fiches amortit le contexte fixe et le raisonnement de chaque
+// appel, mais le gain doit etre valide contre l'API avant de devenir le defaut:
+// un lot incomplet ferait echouer la generation.
 const DEFAULT_DECK_BATCH_SIZE = 1;
+const REASONING_EFFORTS = ["minimal", "low", "medium", "high"];
 
 const SYSTEM_BASE = `Tu es Gnosis, un architecte pedagogique specialise dans les sujets techniques.
 Tu construis des decks Kapsule en francais par defaut.
@@ -52,6 +57,12 @@ export function resolveOpenAISettings(env = process.env) {
       DEFAULT_MAX_OUTPUT_TOKENS,
     ),
     deckBatchSize: clampNumber(env.OPENAI_DECK_BATCH_SIZE, 1, 6, DEFAULT_DECK_BATCH_SIZE),
+    // Levier de cout non active par defaut: la valeur doit etre validee contre
+    // l'API avant d'etre imposee, un parametre refuse ferait echouer chaque appel.
+    reasoningEffort: REASONING_EFFORTS.includes(env.OPENAI_REASONING_EFFORT)
+      ? env.OPENAI_REASONING_EFFORT
+      : null,
+    tokenBudget: clampNumber(env.GNOSIS_TOKEN_BUDGET, 0, 10_000_000, 0),
   };
 }
 
@@ -120,6 +131,7 @@ function upstreamDetail(error) {
 }
 
 export async function callStructured(client, settings, name, schema, input, overrides = {}) {
+  overrides.budget?.assertRemaining();
   try {
     // `signal` est une option de requete du SDK: le placer dans le corps fait
     // rejeter l'appel par OpenAI ("Unknown parameter: 'signal'").
@@ -130,14 +142,34 @@ export async function callStructured(client, settings, name, schema, input, over
         input,
         text: jsonFormat(name, schema),
         max_output_tokens: overrides.maxOutputTokens || settings.maxOutputTokens,
+        ...(settings.reasoningEffort ? { reasoning: { effort: settings.reasoningEffort } } : {}),
       },
       { signal: overrides.signal },
     );
+    const snapshot = overrides.usage?.record(overrides.stage, readUsage(response));
+    if (snapshot) overrides.onUsage?.(snapshot);
     return parseOutput(response);
   } catch (error) {
     if (error instanceof PipelineError) throw error;
     throw classifyOpenAIError(error);
   }
+}
+
+/**
+ * Borne de consommation d'une generation. Le depassement arrete le job avec une
+ * erreur typee, la consommation deja engagee restant mesuree.
+ */
+export function createTokenBudget(maxTokens, usage) {
+  if (!maxTokens) return null;
+  return {
+    assertRemaining() {
+      if (usage.totalTokens < maxTokens) return;
+      throw new PipelineError(
+        `Budget de generation atteint: ${usage.totalTokens} tokens consommes pour une limite de ${maxTokens}.`,
+        { code: "GENERATION_BUDGET_EXCEEDED", status: 402 },
+      );
+    },
+  };
 }
 
 function pipelineSummary(normalized, families, expansion, plan, deck) {
@@ -171,7 +203,7 @@ function normalizeDeckIds(deck) {
   return applyCalculatedDurations(deck);
 }
 
-async function repairDeck(client, model, deck, validation, signal) {
+async function repairDeck(client, model, deck, validation, calls) {
   const repaired = await callStructured(client, model, "kapsule_deck_repair", deckOutputSchema, [
     { role: "system", content: SYSTEM_BASE },
     {
@@ -190,10 +222,12 @@ Contraintes:
 - Aucune propriete additionnelle.
 - quiz.answer est un index base 0 valide.`,
     },
-  ], { signal });
+  ], { ...calls, stage: "Reparation" });
   return normalizeDeckIds(repaired);
 }
 
+// Le lot doit contenir exactement les fiches demandees: sans minItems, un lot
+// incomplet passerait le schema et le deck perdrait des fiches en silence.
 function deckBatchSchema(batchSize) {
   return {
     ...deckOutputSchema,
@@ -201,13 +235,26 @@ function deckBatchSchema(batchSize) {
       ...deckOutputSchema.properties,
       cards: {
         ...deckOutputSchema.properties.cards,
+        minItems: batchSize,
         maxItems: batchSize,
       },
     },
   };
 }
 
-async function generateDeckBatches(client, settings, plan, expansion, signal, onProgress) {
+/**
+ * Ne conserve de l'expansion que les familles couvertes par le lot: renvoyer
+ * l'expansion complete a chaque fiche etait la principale redondance d'entree.
+ */
+export function expansionForBatch(expansion, batch) {
+  const families = new Set(batch.map((card) => card.family).filter(Boolean));
+  const kept = (expansion?.families ?? []).filter(
+    (family) => families.has(family.title) || families.has(family.id),
+  );
+  return { families: kept.length > 0 ? kept : (expansion?.families ?? []).slice(0, 1) };
+}
+
+async function generateDeckBatches(client, settings, plan, expansion, calls, onProgress) {
   const batches = [];
   for (let index = 0; index < plan.cards.length; index += settings.deckBatchSize) {
     batches.push(plan.cards.slice(index, index + settings.deckBatchSize));
@@ -251,20 +298,33 @@ ${JSON.stringify({ id: plan.deckId, title: plan.title, description: plan.descrip
 Fiches a generer:
 ${JSON.stringify(batch, null, 2)}
 
-Expansion:
-${JSON.stringify(expansion, null, 2)}`,
+Expansion des familles concernees:
+${JSON.stringify(expansionForBatch(expansion, batch), null, 2)}`,
         },
       ],
-      { signal },
+      {
+        ...calls,
+        stage: "Fiches",
+        // Le budget de sortie configure vaut par fiche: un lot en demande autant.
+        maxOutputTokens: Math.min(64_000, settings.maxOutputTokens * batch.length),
+      },
     );
     deck.cards.push(...(partial.cards || []));
+  }
+
+  if (deck.cards.length !== plan.cards.length) {
+    throw new PipelineError(
+      `Le deck genere contient ${deck.cards.length} fiches pour ${plan.cards.length} planifiees.`,
+      { code: "DECK_INCOMPLETE", status: 502 },
+    );
   }
 
   return normalizeDeckIds(deck);
 }
 
-export async function generateDeckPipeline({ topics, options = {}, env = process.env, signal, onProgress }) {
+export async function generateDeckPipeline({ topics, options = {}, env = process.env, signal, onProgress, onUsage }) {
   const settings = resolveOpenAISettings(env);
+  const usage = createUsageCollector();
   const cardCeiling = clampNumber(options.cardCeiling, 2, 100, 24);
   const useMock = env.GNOSIS_MOCK_OPENAI === "1" || env.NODE_ENV === "test";
 
@@ -277,6 +337,7 @@ export async function generateDeckPipeline({ topics, options = {}, env = process
       validation,
       pipeline: pipelineSummary(mock.normalized, mock.families, mock.expansion, mock.plan, mock.deck),
       metrics: estimateDeckMetrics(mock.deck),
+      usage: usage.snapshot(),
       model: "mock",
     };
   }
@@ -293,6 +354,14 @@ export async function generateDeckPipeline({ topics, options = {}, env = process
     timeout: settings.timeout,
     maxRetries: settings.maxRetries,
   });
+  // Options communes a chaque appel: signal d'annulation, mesure de consommation
+  // et borne de budget. La consommation reste attachee au job meme en cas d'echec.
+  const calls = {
+    signal,
+    usage,
+    onUsage,
+    budget: createTokenBudget(settings.tokenBudget, usage),
+  };
   const context = {
     topics,
     options,
@@ -315,7 +384,7 @@ export async function generateDeckPipeline({ topics, options = {}, env = process
 Contexte:
 ${JSON.stringify(context, null, 2)}`,
     },
-  ], { signal });
+  ], { ...calls, stage: "Normalisation" });
 
   onProgress?.("Familles", 15);
   const families = await callStructured(client, settings, "gnosis_topic_families", familiesSchema, [
@@ -328,7 +397,7 @@ ${JSON.stringify(normalized, null, 2)}
 Options:
 ${JSON.stringify(options, null, 2)}`,
     },
-  ], { signal });
+  ], { ...calls, stage: "Familles" });
 
   onProgress?.("Expansion", 25);
   const expansion = await callStructured(client, settings, "gnosis_family_expansion", expansionSchema, [
@@ -343,7 +412,7 @@ ${JSON.stringify(families, null, 2)}
 Sujets normalises:
 ${JSON.stringify(normalized, null, 2)}`,
     },
-  ], { signal });
+  ], { ...calls, stage: "Expansion" });
 
   onProgress?.("Plan", 35);
   const plan = await callStructured(client, settings, "gnosis_deck_plan", createPlanSchema(cardCeiling), [
@@ -365,14 +434,14 @@ La duree finale sera calculee depuis le volume reel: ceil(mots / 190) + ceil(nb_
 Entree:
 ${JSON.stringify({ normalized, families, expansion, options }, null, 2)}`,
     },
-  ], { signal });
+  ], { ...calls, stage: "Plan" });
 
-  const deck = await generateDeckBatches(client, settings, plan, expansion, signal, onProgress);
+  const deck = await generateDeckBatches(client, settings, plan, expansion, calls, onProgress);
 
   let validation = validateDeck(deck);
   let finalDeck = deck;
   if (!validation.valid) {
-    finalDeck = await repairDeck(client, settings, deck, validation, signal);
+    finalDeck = await repairDeck(client, settings, deck, validation, calls);
     validation = validateDeck(finalDeck);
   }
 
@@ -394,6 +463,7 @@ ${JSON.stringify({ normalized, families, expansion, options }, null, 2)}`,
     validation,
     pipeline: pipelineSummary(normalized, families, expansion, plan, finalDeck),
     metrics: estimateDeckMetrics(finalDeck),
+    usage: usage.snapshot(),
     model: settings.model,
   };
 }

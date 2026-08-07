@@ -1,6 +1,8 @@
 const WORDS_PER_MINUTE = 190;
-const MIN_CARD_WORDS = 1500;
-const TARGET_CARD_WORDS = 1800;
+// Planchers de lisibilite, jamais des volumes a atteindre: une fiche courte et
+// juste est preferable a une fiche etiree pour approcher une cible.
+const MIN_CARD_WORDS = 800;
+const TARGET_CARD_WORDS = 1200;
 
 function richTextFromSection(section) {
   if (!section || typeof section !== "object") return [];

@@ -963,6 +963,13 @@ select {
   line-height: 1.45;
 }
 
+.state .spent {
+  margin-top: 6px;
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
 .deck-preview {
   display: flex;
   align-items: flex-start;

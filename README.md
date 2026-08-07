@@ -64,6 +64,15 @@ En developpement :
 6. Validation locale.
 7. Reparation ciblee si OpenAI produit un JSON invalide.
 
+## Cout d'une generation
+
+Gnosis mesure les tokens consommes par etape et les affiche avec le deck. La
+consommation reste visible si la generation echoue en cours de route. Les
+leviers de reduction sont l'envoi du seul contexte utile a chaque lot de fiches,
+le regroupement des fiches par appel (`OPENAI_DECK_BATCH_SIZE`), l'effort de
+raisonnement optionnel (`OPENAI_REASONING_EFFORT`) et une borne dure
+(`GNOSIS_TOKEN_BUDGET`) qui arrete proprement la generation.
+
 ## Workflow Logics
 
 La chaine initiale est dans `logics/` :
