@@ -9,6 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: Claude
+> Indicators reviewed: 2026-08-07
 
 # Context
 - Orchestrate the scaffolded request chain and keep sibling implementation slices linked.
@@ -55,6 +56,7 @@
 # Report
 - Livre: mesure de consommation par etape jusqu'a l'interface, contexte d'expansion cible par lot, budget de tokens avec arret propre, effort de raisonnement optionnel, garde-fou de lot complet, planchers de mots reconcilies avec le principe de non-remplissage.
 - Deux leviers restent desactives par defaut car ils ne peuvent pas etre valides contre l'API sans credit: `OPENAI_DECK_BATCH_SIZE=3` et `OPENAI_REASONING_EFFORT`. Un parametre refuse par l'API ferait echouer chaque appel, comme la regression corrigee en 1.2.2.
+- Release 1.3.0 livree: implementation `367dfda`, preparation `6c15d02`, CI 31212922855 verte, tag `v1.3.0`, Release by tag 31213127599 success, `/api/health` renvoie `v1.3.0`.
 - Etape 5 non close: le gain de cout reel, domine par les tokens de sortie et de raisonnement, doit etre mesure sur une generation complete une fois le credit OpenAI retabli. La mesure est desormais instrumentee pour le faire sans travail supplementaire.
 
 # AI Context
