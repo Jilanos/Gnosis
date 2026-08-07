@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.2 - 2026-08-07
+
+- Pass the abort signal as an OpenAI request option instead of a body field: every real generation was rejected with `HTTP 400 Unknown parameter: 'signal'`, and cancellation now actually reaches OpenAI.
+- Report the upstream HTTP status and message in failed pipeline calls instead of the opaque `L'appel OpenAI a echoue.`
+- Raise the per-call OpenAI timeout to 240s and the client guard to 30 minutes, matching a real deck generation (about 21 minutes for 20 cards with gpt-5.6).
+
 ## 1.2.1 - 2026-08-07
 
 - Create `/app/data` in the runtime image and give it to the `node` user, so generation jobs can be persisted instead of failing with `EACCES: permission denied, mkdir '/app/data'`.
