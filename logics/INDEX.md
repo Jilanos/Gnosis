@@ -17,6 +17,7 @@
 | [prod_005_publier_les_derniers_assets_icones_v3_gnosis](product/prod_005_publier_les_derniers_assets_icones_v3_gnosis.md) | Publier les derniers assets Icones V3 Gnosis | Proposed |  |  | product/prod_005_publier_les_derniers_assets_icones_v3_gnosis.md |
 | [prod_006_identite_gnosis_alignee_sur_icones_v3_corrige](product/prod_006_identite_gnosis_alignee_sur_icones_v3_corrige.md) | Identite Gnosis alignee sur Icones V3 corrige | Proposed |  |  | product/prod_006_identite_gnosis_alignee_sur_icones_v3_corrige.md |
 | [prod_007_generation_gnosis_pilotee_par_la_couverture_pedagogique](product/prod_007_generation_gnosis_pilotee_par_la_couverture_pedagogique.md) | Generation Gnosis pilotee par la couverture pedagogique | Settled |  |  | product/prod_007_generation_gnosis_pilotee_par_la_couverture_pedagogique.md |
+| [prod_008_generation_gnosis_a_cout_maitrise](product/prod_008_generation_gnosis_a_cout_maitrise.md) | Generation Gnosis a cout maitrise | Proposed |  |  | product/prod_008_generation_gnosis_a_cout_maitrise.md |
 
 ## Roadmaps
 
@@ -39,6 +40,7 @@ _None_
 | [req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique](request/req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique.md) | Rendre la granularite pedagogique de Gnosis entierement automatique | Done |  |  | request/req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique.md |
 | [req_011_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production](request/req_011_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production.md) | Corriger l'ecriture des jobs Gnosis dans le conteneur de production | Done |  |  | request/req_011_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production.md |
 | [req_012_reparer_l_appel_openai_annulable_et_rendre_les_echecs_de_generation_diagnosticables](request/req_012_reparer_l_appel_openai_annulable_et_rendre_les_echecs_de_generation_diagnosticables.md) | Reparer l'appel OpenAI annulable et rendre les echecs de generation diagnosticables | Done |  |  | request/req_012_reparer_l_appel_openai_annulable_et_rendre_les_echecs_de_generation_diagnosticables.md |
+| [req_013_maitriser_le_cout_des_appels_openai_d_une_generation_gnosis](request/req_013_maitriser_le_cout_des_appels_openai_d_une_generation_gnosis.md) | Maitriser le cout des appels OpenAI d'une generation Gnosis | Draft |  |  | request/req_013_maitriser_le_cout_des_appels_openai_d_une_generation_gnosis.md |
 
 ## Backlog
 
@@ -65,6 +67,8 @@ _None_
 | [item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques](backlog/item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques.md) | Aligner l'interface Gnosis sur le niveau et le bilan pedagogique automatiques | Done |  | 100% | backlog/item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques.md |
 | [item_020_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production](backlog/item_020_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production.md) | Corriger l'ecriture des jobs Gnosis dans le conteneur de production | Done |  | 100% | backlog/item_020_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production.md |
 | [item_021_reparer_l_appel_openai_annulable_et_rendre_les_echecs_de_generation_diagnosticables](backlog/item_021_reparer_l_appel_openai_annulable_et_rendre_les_echecs_de_generation_diagnosticables.md) | Reparer l'appel OpenAI annulable et rendre les echecs de generation diagnosticables | Done |  | 100% | backlog/item_021_reparer_l_appel_openai_annulable_et_rendre_les_echecs_de_generation_diagnosticables.md |
+| [item_022_mesurer_la_consommation_de_tokens_de_chaque_etape_de_generation](backlog/item_022_mesurer_la_consommation_de_tokens_de_chaque_etape_de_generation.md) | Mesurer la consommation de tokens de chaque etape de generation | Ready |  | 0% | backlog/item_022_mesurer_la_consommation_de_tokens_de_chaque_etape_de_generation.md |
+| [item_023_reduire_le_cout_d_une_generation_a_couverture_pedagogique_constante](backlog/item_023_reduire_le_cout_d_une_generation_a_couverture_pedagogique_constante.md) | Reduire le cout d'une generation a couverture pedagogique constante | Ready |  | 0% | backlog/item_023_reduire_le_cout_d_une_generation_a_couverture_pedagogique_constante.md |
 
 ## Tasks
 
@@ -83,3 +87,4 @@ _None_
 | [task_011_livrer_la_generation_gnosis_a_granularite_automatique](tasks/task_011_livrer_la_generation_gnosis_a_granularite_automatique.md) | Livrer la generation Gnosis a granularite automatique | Done | Claude | 100% | tasks/task_011_livrer_la_generation_gnosis_a_granularite_automatique.md |
 | [task_012_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production](tasks/task_012_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production.md) | Corriger l'ecriture des jobs Gnosis dans le conteneur de production | Done | Claude | 100% | tasks/task_012_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production.md |
 | [task_013_reparer_l_appel_openai_annulable_et_rendre_les_echecs_de_generation_diagnosticables](tasks/task_013_reparer_l_appel_openai_annulable_et_rendre_les_echecs_de_generation_diagnosticables.md) | Reparer l'appel OpenAI annulable et rendre les echecs de generation diagnosticables | Done | Claude | 100% | tasks/task_013_reparer_l_appel_openai_annulable_et_rendre_les_echecs_de_generation_diagnosticables.md |
+| [task_014_livrer_la_maitrise_du_cout_des_generations_gnosis](tasks/task_014_livrer_la_maitrise_du_cout_des_generations_gnosis.md) | Livrer la maitrise du cout des generations Gnosis | Ready |  | 0% | tasks/task_014_livrer_la_maitrise_du_cout_des_generations_gnosis.md |
