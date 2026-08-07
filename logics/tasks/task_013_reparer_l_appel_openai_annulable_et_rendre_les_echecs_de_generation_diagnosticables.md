@@ -9,6 +9,7 @@
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: Claude
+> Indicators reviewed: 2026-08-07
 
 # Definition of Done (DoD)
 - [x] The backlog scope is implemented.
@@ -51,6 +52,8 @@
 - Cause: `callStructured` envoyait `signal` dans le corps de la requete OpenAI; le job manager fournissant toujours un signal, toute generation reelle etait rejetee en HTTP 400 alors que le mock et les tests passaient.
 - Effet de bord corrige: l'annulation d'un job atteint desormais reellement OpenAI.
 - Diagnostic rendu possible depuis l'interface: le statut et le message amont sont remontes.
+- Release 1.2.2 livree: correctif `3942fd7`, preparation `95f4d65`, CI verte, tag `v1.2.2`, workflow Release by tag 31204095122 success, `/api/health` renvoie `v1.2.2`.
+- Verification en production apres deploiement: la generation reelle franchit Normalisation, Familles, Expansion, Plan puis 64% des fiches, et s'arrete sur `HTTP 429 - You have no credits remaining` remonte tel quel: le blocage restant est le credit du compte OpenAI, plus l'appel lui-meme.
 - Finished on 2026-08-07.
 - Linked backlog item(s): `item_021_reparer_l_appel_openai_annulable_et_rendre_les_echecs_de_generation_diagnosticables`
 - Related request(s): `req_012_reparer_l_appel_openai_annulable_et_rendre_les_echecs_de_generation_diagnosticables`
