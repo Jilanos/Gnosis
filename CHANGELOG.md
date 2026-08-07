@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.9 - 2026-08-07
+
+- Fix the initial client render by importing the `Brain` Lucide icon used by the empty state.
+
 ## 1.1.8 - 2026-08-06
 
 - Replace the Gnosis, Kapsule and Paul Mondou client assets with the corrected Icones V3 masters.
