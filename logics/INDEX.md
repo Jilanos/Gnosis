@@ -37,6 +37,7 @@ _None_
 | [req_008_remplacer_les_assets_gnosis_par_les_masters_icones_v3_corriges](request/req_008_remplacer_les_assets_gnosis_par_les_masters_icones_v3_corriges.md) | Remplacer les assets Gnosis par les masters Icones V3 corriges | Draft |  |  | request/req_008_remplacer_les_assets_gnosis_par_les_masters_icones_v3_corriges.md |
 | [req_009_corriger_le_rendu_initial_du_client_gnosis](request/req_009_corriger_le_rendu_initial_du_client_gnosis.md) | Corriger le rendu initial du client Gnosis | Done |  |  | request/req_009_corriger_le_rendu_initial_du_client_gnosis.md |
 | [req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique](request/req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique.md) | Rendre la granularite pedagogique de Gnosis entierement automatique | Done |  |  | request/req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique.md |
+| [req_011_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production](request/req_011_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production.md) | Corriger l'ecriture des jobs Gnosis dans le conteneur de production | Done |  |  | request/req_011_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production.md |
 
 ## Backlog
 
@@ -61,6 +62,7 @@ _None_
 | [item_017_corriger_le_rendu_initial_du_client_gnosis](backlog/item_017_corriger_le_rendu_initial_du_client_gnosis.md) | Corriger le rendu initial du client Gnosis | Done |  | 100% | backlog/item_017_corriger_le_rendu_initial_du_client_gnosis.md |
 | [item_018_remplacer_le_quota_de_fiches_par_un_contrat_de_granularite_automatique](backlog/item_018_remplacer_le_quota_de_fiches_par_un_contrat_de_granularite_automatique.md) | Remplacer le quota de fiches par un contrat de granularite automatique | Done |  | 100% | backlog/item_018_remplacer_le_quota_de_fiches_par_un_contrat_de_granularite_automatique.md |
 | [item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques](backlog/item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques.md) | Aligner l'interface Gnosis sur le niveau et le bilan pedagogique automatiques | Done |  | 100% | backlog/item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques.md |
+| [item_020_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production](backlog/item_020_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production.md) | Corriger l'ecriture des jobs Gnosis dans le conteneur de production | Done |  | 100% | backlog/item_020_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production.md |
 
 ## Tasks
 
@@ -77,3 +79,4 @@ _None_
 | [task_009_remplacer_les_assets_gnosis_par_les_masters_icones_v3_corriges](tasks/task_009_remplacer_les_assets_gnosis_par_les_masters_icones_v3_corriges.md) | Remplacer les assets Gnosis par les masters Icones V3 corriges | In progress | Claude | 60% | tasks/task_009_remplacer_les_assets_gnosis_par_les_masters_icones_v3_corriges.md |
 | [task_010_corriger_le_rendu_initial_du_client_gnosis](tasks/task_010_corriger_le_rendu_initial_du_client_gnosis.md) | Corriger le rendu initial du client Gnosis | Done | Codex | 100% | tasks/task_010_corriger_le_rendu_initial_du_client_gnosis.md |
 | [task_011_livrer_la_generation_gnosis_a_granularite_automatique](tasks/task_011_livrer_la_generation_gnosis_a_granularite_automatique.md) | Livrer la generation Gnosis a granularite automatique | Done | Claude | 100% | tasks/task_011_livrer_la_generation_gnosis_a_granularite_automatique.md |
+| [task_012_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production](tasks/task_012_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production.md) | Corriger l'ecriture des jobs Gnosis dans le conteneur de production | Done | Claude | 100% | tasks/task_012_corriger_l_ecriture_des_jobs_gnosis_dans_le_conteneur_de_production.md |

@@ -21,6 +21,11 @@ COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/src ./src
 COPY --from=build /app/dist ./dist
 
+# Les jobs de generation sont persistes dans GNOSIS_JOBS_FILE: le repertoire doit
+# exister et appartenir a l'utilisateur node, y compris quand il sert de point de
+# montage a un volume (Docker reprend le proprietaire du repertoire de l'image).
+RUN mkdir -p /app/data && chown node:node /app/data
+
 USER node
 EXPOSE 8787
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
