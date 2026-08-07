@@ -190,36 +190,106 @@ export const expansionSchema = {
   },
 };
 
-export const planSchema = {
+const planSummarySchema = {
   type: "object",
   additionalProperties: false,
-  required: ["deckId", "title", "description", "tags", "cards"],
+  required: ["rationale", "mergedTopics", "addedPrerequisites", "excludedExtensions"],
   properties: {
-    deckId: { type: "string" },
-    title: { type: "string" },
-    description: { type: "string" },
-    tags: stringArray,
-    cards: {
+    rationale: { type: "string" },
+    mergedTopics: {
       type: "array",
-      minItems: 1,
-      maxItems: 24,
       items: {
         type: "object",
         additionalProperties: false,
-        required: ["id", "title", "objective", "level", "durationMin", "family", "coveredTopics"],
+        required: ["canonical", "aliases", "reason"],
         properties: {
-          id: { type: "string" },
-          title: { type: "string" },
-          objective: { type: "string" },
-          level: { type: "string", enum: ["debutant", "intermediaire", "avance"] },
-          durationMin: { type: "integer", minimum: 1, maximum: 10 },
-          family: { type: "string" },
-          coveredTopics: stringArray,
+          canonical: { type: "string" },
+          aliases: stringArray,
+          reason: { type: "string" },
+        },
+      },
+    },
+    addedPrerequisites: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["label", "reason", "requiredFor"],
+        properties: {
+          label: { type: "string" },
+          reason: { type: "string" },
+          requiredFor: { type: "string" },
+        },
+      },
+    },
+    excludedExtensions: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["label", "reason"],
+        properties: {
+          label: { type: "string" },
+          reason: { type: "string" },
         },
       },
     },
   },
 };
+
+/**
+ * Le plan ne recoit aucun nombre cible de fiches. `cardCeiling` est un plafond
+ * technique de securite (cout, taille de reponse), jamais un objectif a atteindre.
+ */
+export function createPlanSchema(cardCeiling = 24) {
+  return {
+    type: "object",
+    additionalProperties: false,
+    required: ["deckId", "title", "description", "tags", "summary", "cards"],
+    properties: {
+      deckId: { type: "string" },
+      title: { type: "string" },
+      description: { type: "string" },
+      tags: stringArray,
+      summary: planSummarySchema,
+      cards: {
+        type: "array",
+        minItems: 1,
+        maxItems: cardCeiling,
+        items: {
+          type: "object",
+          additionalProperties: false,
+          required: [
+            "id",
+            "title",
+            "objective",
+            "level",
+            "durationMin",
+            "family",
+            "coveredTopics",
+            "origin",
+            "sourceTopic",
+            "autonomyReason",
+          ],
+          properties: {
+            id: { type: "string" },
+            title: { type: "string" },
+            objective: { type: "string" },
+            level: { type: "string", enum: ["debutant", "intermediaire", "avance"] },
+            durationMin: { type: "integer", minimum: 1, maximum: 10 },
+            family: { type: "string" },
+            coveredTopics: stringArray,
+            origin: { type: "string", enum: ["notion", "prerequis"] },
+            sourceTopic: { type: "string" },
+            autonomyReason: { type: "string" },
+          },
+        },
+      },
+    },
+  };
+}
+
+export const planSchema = createPlanSchema();
 
 export const deckOutputSchema = {
   type: "object",

@@ -4,7 +4,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { createAuthStore } from "./auth.mjs";
 import { createJobManager } from "./jobs.mjs";
-import { clampInteger, compactTopics } from "./utils.mjs";
+import { clampInteger, compactTopics, resolveLevel } from "./utils.mjs";
 
 const DEFAULT_RATE_LIMIT_WINDOW_MS = 60_000;
 const DEFAULT_RATE_LIMIT_MAX = 20;
@@ -113,7 +113,8 @@ export function createApp(env = process.env) {
   const trustedProxy = Number(env.GNOSIS_TRUST_PROXY || 0);
   if (Number.isInteger(trustedProxy) && trustedProxy > 0) app.set("trust proxy", trustedProxy);
   const maxTopics = clampInteger(env.MAX_INPUT_TOPICS, 1, 200, 80);
-  const maxCards = clampInteger(env.MAX_CARDS, 2, 100, 24);
+  // Plafond technique de fiches (cout et taille de reponse), pas une cible pedagogique.
+  const cardCeiling = clampInteger(env.MAX_CARDS, 2, 100, 24);
   const rateLimit = createRateLimiter(env);
   const jobs = createJobManager(env);
   const auth = createAuthStore(env);
@@ -203,16 +204,13 @@ export function createApp(env = process.env) {
       if (owner.type === "user" && requestApiKey && req.body?.saveApiKey === true) {
         auth.saveOpenAiKey(owner.id, requestApiKey);
       }
+      // Le niveau est la seule intensite pedagogique acceptee: aucun nombre de
+      // fiches, budget ou densite n'entre dans le contrat de generation.
       const options = {
         title: String(rawOptions.title || "").trim(),
         language: rawOptions.language === "anglais" ? "anglais" : "francais",
-        level: ["debutant", "intermediaire", "avance"].includes(rawOptions.level)
-          ? rawOptions.level
-          : "intermediaire",
-        density: ["concise", "dense", "maximale"].includes(rawOptions.density)
-          ? rawOptions.density
-          : "dense",
-        targetCards: clampInteger(rawOptions.targetCards, 2, maxCards, 8),
+        level: resolveLevel(rawOptions.level),
+        cardCeiling,
       };
 
       const requestEnv = { ...env, OPENAI_API_KEY: resolved.value };

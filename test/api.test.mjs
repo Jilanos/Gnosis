@@ -18,8 +18,8 @@ test("POST /api/generate-deck returns a valid deck in mock mode", async () => {
   const response = await agent
     .post("/api/generate-deck")
     .send({
-      topics: ["DNS", "TCP handshake"],
-      options: { title: "Reseaux essentiels", targetCards: 2 },
+      topics: ["DNS", "IPv4"],
+      options: { title: "Reseaux essentiels" },
       apiKey: "sk-test-not-a-real-key",
     })
     .expect(202);
@@ -33,6 +33,8 @@ test("POST /api/generate-deck returns a valid deck in mock mode", async () => {
   assert.equal(job.result.validation.valid, true);
   assert.equal(job.result.deck.cards.length, 2);
   assert.equal(job.result.metrics.cards.length, 2);
+  assert.equal(job.result.plan.cards.length, job.result.deck.cards.length);
+  assert.ok(job.result.plan.summary.rationale.length > 0);
   assert.equal(job.result.deck.cards[0].durationMin, job.result.metrics.cards[0].schemaDurationMin);
   assert.equal(JSON.stringify(response.body).includes("sk-test-not-a-real-key"), false);
 });
@@ -78,7 +80,6 @@ test("POST /api/generate-deck protects the server OpenAI key in production", asy
     .post("/api/generate-deck")
     .send({
       topics: ["DNS", "TCP"],
-      options: { targetCards: 2 },
     })
     .expect(503);
 
@@ -98,7 +99,6 @@ test("POST /api/generate-deck accepts the configured access token in production"
     .set("x-gnosis-access-token", "local-secret")
     .send({
       topics: ["DNS", "TCP"],
-      options: { targetCards: 2 },
     })
     .expect(202);
 

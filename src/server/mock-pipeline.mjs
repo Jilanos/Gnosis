@@ -1,4 +1,5 @@
-import { slugify, uniqueSlug } from "./utils.mjs";
+import { planCoverage } from "./plan-coverage.mjs";
+import { slugify } from "./utils.mjs";
 
 function familyFor(topic) {
   const lower = topic.toLowerCase();
@@ -12,21 +13,27 @@ function familyFor(topic) {
 }
 
 export function createMockPipeline(topics, options = {}) {
+  const coverage = planCoverage(topics, {
+    level: options.level,
+    familyFor,
+    cardCeiling: options.cardCeiling,
+  });
+
   const normalized = {
-    topics: topics.map((topic) => ({
-      label: topic,
+    topics: coverage.groups.map((group) => ({
+      label: group.canonical,
       kind: "concept",
       confidence: 0.82,
     })),
-    merged: [],
+    merged: coverage.summary.mergedTopics.map(({ canonical, aliases }) => ({ canonical, aliases })),
     warnings: [],
   };
 
   const grouped = new Map();
-  for (const topic of topics) {
-    const family = familyFor(topic);
+  for (const group of coverage.groups) {
+    const family = familyFor(group.canonical);
     if (!grouped.has(family)) grouped.set(family, []);
-    grouped.get(family).push(topic);
+    grouped.get(family).push(group.canonical);
   }
 
   const families = {
@@ -40,45 +47,32 @@ export function createMockPipeline(topics, options = {}) {
     })),
   };
 
+  // Seuls les prerequis indispensables sont ajoutes, avec leur justification;
+  // les extensions non necessaires restent tracees dans excludedTopics.
   const expansion = {
     families: families.families.map((family) => ({
       id: family.id,
       title: family.title,
       coreTopics: family.topics,
-      addedTopics: [
-        {
-          label: "modes de defaillance",
-          reason: "Une fiche technique utile doit expliquer ce qui casse et comment diagnostiquer.",
+      addedTopics: coverage.summary.addedPrerequisites
+        .filter((prerequisite) => familyFor(prerequisite.label) === family.title)
+        .map((prerequisite) => ({
+          label: prerequisite.label,
+          reason: prerequisite.reason,
           importance: "forte",
-        },
-        {
-          label: "exemples operationnels",
-          reason: "Les exemples rendent les notions abstraites exploitables.",
-          importance: "forte",
-        },
-      ],
-      excludedTopics: [],
+        })),
+      excludedTopics: coverage.summary.excludedExtensions.map((extension) => extension.label),
     })),
   };
 
-  const usedCardIds = new Set();
-  const targetCards = Math.max(2, Math.min(Number(options.targetCards) || 6, 24));
-  const selectedTopics = topics.slice(0, targetCards);
   const plan = {
-    deckId: slugify(options.title || selectedTopics[0] || "deck-gnosis", "deck-gnosis"),
+    deckId: slugify(options.title || coverage.cards[0]?.title || "deck-gnosis", "deck-gnosis"),
     title: options.title || "Deck technique Gnosis",
     description:
       "Deck genere par Gnosis : notions techniques organisees, enrichies et transformees en fiches Kapsule avec quiz.",
     tags: ["gnosis", "technique", "kapsule"],
-    cards: selectedTopics.map((topic) => ({
-      id: uniqueSlug(topic, usedCardIds),
-      title: topic,
-      objective: `Comprendre ${topic}, ses usages, ses limites et ses erreurs frequentes.`,
-      level: options.level || "intermediaire",
-      durationMin: 7,
-      family: familyFor(topic),
-      coveredTopics: [topic, "diagnostic", "exemple concret"],
-    })),
+    summary: coverage.summary,
+    cards: coverage.cards,
   };
 
   const deck = {

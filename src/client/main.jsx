@@ -18,6 +18,7 @@ import {
   Sun,
 } from "lucide-react";
 import packageJson from "../../package.json";
+import { planCardCount, planRationale, planSummaryLines } from "./plan-summary.mjs";
 import gnosisEmblemDark from "./assets/gnosis-emblem-dark.png";
 import gnosisEmblemLight from "./assets/gnosis-emblem-light.png";
 import kapsuleIconDark from "./assets/kapsule-icon-dark.png";
@@ -181,8 +182,6 @@ function App() {
     title: "",
     language: "francais",
     level: "intermediaire",
-    density: "dense",
-    targetCards: 8,
   });
   const [apiKey, setApiKey] = React.useState("");
   const [saveApiKey, setSaveApiKey] = React.useState(true);
@@ -469,29 +468,12 @@ function App() {
                   </select>
                 </label>
 
-                <label className="field">
-                  <span className="flabel">Densite</span>
-                  <select
-                    value={options.density}
-                    onChange={(event) => updateOption("density", event.target.value)}
-                  >
-                    <option value="concise">Concise</option>
-                    <option value="dense">Dense</option>
-                    <option value="maximale">Maximale</option>
-                  </select>
-                </label>
-
-                <label className="field">
-                  <span className="flabel">Fiches ciblees</span>
-                  <input
-                    type="number"
-                    min="2"
-                    max="24"
-                    value={options.targetCards}
-                    onChange={(event) => updateOption("targetCards", Number(event.target.value))}
-                  />
-                </label>
               </div>
+
+              <p className="hint granularity-note">
+                Gnosis choisit seul le nombre de fiches necessaires a la couverture des notions au
+                niveau demande.
+              </p>
 
               {(!session.loading && (!session.authenticated || !session.hasOpenAiKey)) && <label className="field" style={{ marginBottom: 0 }}>
                 <span className="flabel">Cle API OpenAI</span>
@@ -553,7 +535,7 @@ function App() {
                     <span className="l">sujets</span>
                   </span>
                   <span className="mm">
-                    <span className="v">{options.targetCards}</span>
+                    <span className="v">{deck ? deck.cards.length : "—"}</span>
                     <span className="l">fiches</span>
                   </span>
                 </div>
@@ -641,6 +623,39 @@ function ErrorState({ message }) {
   );
 }
 
+const PLAN_LINE_LABELS = {
+  fusion: "Fusion",
+  prerequis: "Prerequis",
+  ecarte: "Ecarte",
+};
+
+function PlanSummary({ plan }) {
+  const rationale = planRationale(plan);
+  const lines = planSummaryLines(plan);
+  if (!rationale && lines.length === 0) return null;
+
+  return (
+    <div className="panel plan-summary">
+      <div className="metrics-head">
+        <h3>Bilan de planification</h3>
+        <span className="total">{planCardCount(plan)} fiches retenues</span>
+      </div>
+      {rationale && <p>{rationale}</p>}
+      {lines.length > 0 && (
+        <ul className="plan-decisions">
+          {lines.map((line) => (
+            <li key={`${line.kind}-${line.label}`}>
+              <span className={`tag ${line.kind}`}>{PLAN_LINE_LABELS[line.kind]}</span>
+              <strong>{line.label}</strong>
+              <span>{line.detail}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 function DeckResult({ deck, plan, metrics, pipeline, validation, copied }) {
   return (
     <div className="deck-result">
@@ -662,6 +677,8 @@ function DeckResult({ deck, plan, metrics, pipeline, validation, copied }) {
         </div>
       )}
 
+      <PlanSummary plan={plan} />
+
       {plan?.cards?.length > 0 && (
         <div className="panel plan">
           <h3>Plan pedagogique</h3>
@@ -671,7 +688,9 @@ function DeckResult({ deck, plan, metrics, pipeline, validation, copied }) {
                 <span className="num">{index + 1}</span>
                 <div>
                   <strong>{card.title}</strong>
+                  {card.origin === "prerequis" && <span className="tag">prerequis</span>}
                   <span>{card.objective}</span>
+                  {card.autonomyReason && <span className="why">{card.autonomyReason}</span>}
                 </div>
               </li>
             ))}

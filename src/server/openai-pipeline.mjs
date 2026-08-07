@@ -1,10 +1,10 @@
 import OpenAI from "openai";
 import {
+  createPlanSchema,
   deckOutputSchema,
   expansionSchema,
   familiesSchema,
   normalizedSchema,
-  planSchema,
 } from "./pipeline-schemas.mjs";
 import { applyCalculatedDurations, estimateDeckMetrics } from "./card-metrics.mjs";
 import { createMockPipeline } from "./mock-pipeline.mjs";
@@ -125,6 +125,9 @@ export async function callStructured(client, settings, name, schema, input, over
 
 function pipelineSummary(normalized, families, expansion, plan, deck) {
   const metrics = estimateDeckMetrics(deck);
+  const summary = plan.summary ?? {};
+  const merged = summary.mergedTopics?.length ?? 0;
+  const prerequisites = summary.addedPrerequisites?.length ?? 0;
   return [
     { name: "Normalisation", summary: `${normalized.topics.length} sujets nettoyes` },
     { name: "Familles", summary: `${families.families.length} familles pedagogiques` },
@@ -132,7 +135,10 @@ function pipelineSummary(normalized, families, expansion, plan, deck) {
       name: "Expansion",
       summary: `${expansion.families.reduce((sum, family) => sum + family.addedTopics.length, 0)} notions ajoutees`,
     },
-    { name: "Plan", summary: `${plan.cards.length} fiches planifiees` },
+    {
+      name: "Plan",
+      summary: `${plan.cards.length} fiches deduites de la couverture (${merged} fusions, ${prerequisites} prerequis)`,
+    },
     { name: "Deck", summary: `${deck.cards.length} fiches Kapsule` },
     { name: "Calibration", summary: `${metrics.totalWords} mots / ${metrics.totalDurationMin} min calculees` },
     { name: "Validation", summary: "Schema Kapsule verifie" },
@@ -219,6 +225,7 @@ Respecte strictement:
 - aucune propriete additionnelle
 - Markdown leger uniquement dans content
 - fiches precises et concretes, sans volume inutile
+- respecte objective et autonomyReason de chaque fiche; n'ajoute aucun contenu pour atteindre un volume
 - durationMin doit correspondre au volume reel: ceil(mots / 190) + ceil(nb_questions / 2)
 
 Metadonnees du deck:
@@ -241,6 +248,7 @@ ${JSON.stringify(expansion, null, 2)}`,
 
 export async function generateDeckPipeline({ topics, options = {}, env = process.env, signal, onProgress }) {
   const settings = resolveOpenAISettings(env);
+  const cardCeiling = clampNumber(options.cardCeiling, 2, 100, 24);
   const useMock = env.GNOSIS_MOCK_OPENAI === "1" || env.NODE_ENV === "test";
 
   if (useMock) {
@@ -310,8 +318,9 @@ ${JSON.stringify(options, null, 2)}`,
     { role: "system", content: SYSTEM_BASE },
     {
       role: "user",
-      content: `Complete chaque famille avec les connaissances tres proches et fortement liees.
-Ajoute seulement ce qui augmente la precision du deck sans elargir abusivement le scope.
+      content: `Complete chaque famille uniquement avec les prerequis indispensables a la comprehension des notions saisies.
+Chaque ajout doit etre justifie par une dependance reelle; tout ce qui est seulement interessant ou decoratif va dans excludedTopics.
+N'ajoute rien pour enrichir le volume du deck.
 Familles:
 ${JSON.stringify(families, null, 2)}
 Sujets normalises:
@@ -320,13 +329,21 @@ ${JSON.stringify(normalized, null, 2)}`,
   ], { signal });
 
   onProgress?.("Plan", 35);
-  const plan = await callStructured(client, settings, "gnosis_deck_plan", planSchema, [
+  const plan = await callStructured(client, settings, "gnosis_deck_plan", createPlanSchema(cardCeiling), [
     { role: "system", content: SYSTEM_BASE },
     {
       role: "user",
       content: `Transforme les familles enrichies en plan de deck Kapsule.
-Le nombre cible de fiches est ${options.targetCards || 8}; ne depasse pas 24 fiches.
-Chaque fiche doit etre autonome, progressive et lisible en 5 a 10 minutes.
+Aucun nombre cible de fiches n'existe: deduis le nombre minimal de fiches necessaires a une couverture progressive des notions saisies.
+Regles de granularite:
+- une fiche = un objectif d'apprentissage autonome, non redondant (origin "notion", sourceTopic = notion saisie couverte);
+- fusionne les sous-notions qui ne meritent pas une fiche separee et declare la fusion dans summary.mergedTopics;
+- n'ajoute un prerequis (origin "prerequis") que s'il est indispensable a la comprehension au niveau ${options.level || "intermediaire"}, avec sa justification dans summary.addedPrerequisites;
+- refuse toute extension non necessaire et trace-la dans summary.excludedExtensions;
+- n'ajoute jamais une fiche, un mot ou une minute pour atteindre un volume: mieux vaut un deck court et juste;
+- autonomyReason explique pourquoi chaque fiche se tient seule;
+- summary.rationale resume en deux phrases le plan retenu.
+Le plafond de ${cardCeiling} fiches est une limite technique de securite, jamais un objectif.
 La duree finale sera calculee depuis le volume reel: ceil(mots / 190) + ceil(nb_questions / 2).
 Entree:
 ${JSON.stringify({ normalized, families, expansion, options }, null, 2)}`,

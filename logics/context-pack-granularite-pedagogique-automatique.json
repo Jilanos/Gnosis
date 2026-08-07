@@ -1,0 +1,357 @@
+{
+  "budgets": {
+    "max_docs": 32,
+    "max_docs_per_ref": 8
+  },
+  "changed_paths": [],
+  "command": "logics-manager sync context-pack req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique item_018_remplacer_le_quota_de_fiches_par_un_contrat_de_granularite_automatique item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques task_011_livrer_la_generation_gnosis_a_granularite_automatique --mode full --profile deep --handoff",
+  "companion_docs": [
+    {
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_018_remplacer_le_quota_de_fiches_par_un_contrat_de_granularite_automatique",
+          "item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques"
+        ],
+        "prod": [
+          "prod_007_generation_gnosis_pilotee_par_la_couverture_pedagogique"
+        ],
+        "req": [
+          "req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique"
+        ],
+        "task": [
+          "task_011_livrer_la_generation_gnosis_a_granularite_automatique"
+        ]
+      },
+      "path": "logics/product/prod_007_generation_gnosis_pilotee_par_la_couverture_pedagogique.md",
+      "ref": "prod_007_generation_gnosis_pilotee_par_la_couverture_pedagogique",
+      "sections": {
+        "Goals": [
+          "- Faire du niveau d'apprentissage le principal signal de profondeur pedagogique.",
+          "- Produire le minimum de fiches utiles, avec une couverture explicable et sans redondance.",
+          "- Rendre visibles les decisions de planification qui modifient le perimetre initial."
+        ],
+        "Key product decisions": [
+          "- Use structured input as the source of truth for generated docs.",
+          "- Keep generated write paths local and repo-bounded."
+        ],
+        "Overview": [
+          "Gnosis choisit seul la granularite utile d'un deck a partir des notions et du niveau voulu. Le produit vise une comprehension juste : ni decoupage artificiel, ni resume appauvri, ni extension decorative."
+        ],
+        "References": [
+          "- Product back-reference: `req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique`",
+          "- Task back-reference: `task_011_livrer_la_generation_gnosis_a_granularite_automatique`"
+        ]
+      },
+      "status": "Proposed",
+      "title": "Generation Gnosis pilotee par la couverture pedagogique"
+    }
+  ],
+  "docs": [
+    {
+      "ai_context": {
+        "keywords": "request-chain-scaffold, rendre la granularite pedagogique de gnosis entierement automatique, development-ready",
+        "skip when": "The change is unrelated to this scaffolded request chain.",
+        "summary": "Rendre la granularite pedagogique de Gnosis entierement automatique",
+        "use when": "You need to implement or review the scaffolded workflow for Rendre la granularite pedagogique de Gnosis entierement automatique."
+      },
+      "kind": "request",
+      "linked_refs": {
+        "item": [
+          "item_018_remplacer_le_quota_de_fiches_par_un_contrat_de_granularite_automatique",
+          "item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques"
+        ],
+        "prod": [
+          "prod_007_generation_gnosis_pilotee_par_la_couverture_pedagogique"
+        ],
+        "req": [
+          "req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique"
+        ]
+      },
+      "path": "logics/request/req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique.md",
+      "ref": "req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- AC1: L'utilisateur choisit uniquement son niveau d'apprentissage (low, medium ou advanced); aucun nombre, budget ou curseur de fiches n'est expose ni requis.",
+          "- AC2: Le pipeline calcule un plan avec le nombre minimal de fiches necessaires a une couverture progressive des notions et de leurs prerequis indispensables.",
+          "- AC3: Chaque fiche correspond a un objectif d'apprentissage autonome, non redondant et relie a une notion saisie ou a un prerequis justifie.",
+          "- AC4: Le modele peut fusionner des sous-notions et peut refuser des extensions non necessaires; il ne remplit jamais un quota de fiches, de mots ou de duree.",
+          "- AC5: Le resultat expose un court bilan du plan : fiches retenues, notions fusionnees, prerequis ajoutes et raison pedagogique de chacun.",
+          "- AC6: Les validations et tests couvrent des cas simples, intermediaires et avances, y compris une notion unique, des notions redondantes et des prerequis requis."
+        ],
+        "Needs": [
+          "- Gnosis doit choisir automatiquement le nombre de fiches necessaires pour apprendre les notions saisies au niveau demande.",
+          "- Le niveau choisi est la seule intensite pedagogique explicite : low, medium ou advanced.",
+          "- Les prerequis et notions adjacentes ne peuvent etre ajoutes que lorsqu'ils sont indispensables a la comprehension; ils doivent etre justifies.",
+          "- Le contenu et le decoupage ne doivent jamais etre etires ou reduits pour satisfaire un nombre de fiches, une duree ou un volume arbitraire."
+        ]
+      },
+      "status": "Draft",
+      "title": "Rendre la granularite pedagogique de Gnosis entierement automatique"
+    },
+    {
+      "ai_context": {
+        "keywords": "scaffolded-backlog, remplacer le quota de fiches par un contrat de granularite automatique, implementation-ready",
+        "skip when": "The change belongs to another backlog slice.",
+        "summary": "Remplacer le quota de fiches par un contrat de granularite automatique",
+        "use when": "Implementing the scaffolded slice for Remplacer le quota de fiches par un contrat de granularite automatique."
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_018_remplacer_le_quota_de_fiches_par_un_contrat_de_granularite_automatique"
+        ],
+        "prod": [
+          "prod_007_generation_gnosis_pilotee_par_la_couverture_pedagogique"
+        ],
+        "req": [
+          "req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique"
+        ],
+        "task": [
+          "task_011_livrer_la_generation_gnosis_a_granularite_automatique"
+        ]
+      },
+      "path": "logics/backlog/item_018_remplacer_le_quota_de_fiches_par_un_contrat_de_granularite_automatique.md",
+      "ref": "item_018_remplacer_le_quota_de_fiches_par_un_contrat_de_granularite_automatique",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- Le plan derive son nombre de fiches de la couverture utile et ne recoit aucun quota numerique.",
+          "- Chaque fiche planifiee declare son objectif, les notions couvertes et la raison de son autonomie.",
+          "- Les prerequis ajoutes sont limites aux dependances indispensables et motives; les extensions ecartees sont tracees.",
+          "- Les tests prouvent qu'aucun contenu n'est ajoute pour atteindre un volume predetermine."
+        ],
+        "Problem": [
+          "- targetCards contraint le plan avant que la couverture pedagogique soit evaluee.",
+          "- Les prompts et le mock ne distinguent pas suffisamment objectif autonome, prerequis indispensable et extension decorative."
+        ]
+      },
+      "status": "Ready",
+      "title": "Remplacer le quota de fiches par un contrat de granularite automatique"
+    },
+    {
+      "ai_context": {
+        "keywords": "scaffolded-backlog, aligner l'interface gnosis sur le niveau et le bilan pedagogique automatiques, implementation-ready",
+        "skip when": "The change belongs to another backlog slice.",
+        "summary": "Aligner l'interface Gnosis sur le niveau et le bilan pedagogique automatiques",
+        "use when": "Implementing the scaffolded slice for Aligner l'interface Gnosis sur le niveau et le bilan pedagogique automatiques."
+      },
+      "kind": "backlog",
+      "linked_refs": {
+        "item": [
+          "item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques"
+        ],
+        "prod": [
+          "prod_007_generation_gnosis_pilotee_par_la_couverture_pedagogique"
+        ],
+        "req": [
+          "req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique"
+        ],
+        "task": [
+          "task_011_livrer_la_generation_gnosis_a_granularite_automatique"
+        ]
+      },
+      "path": "logics/backlog/item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques.md",
+      "ref": "item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques",
+      "schema_version": "1.0",
+      "sections": {
+        "Acceptance criteria": [
+          "- Le formulaire ne propose aucun nombre cible de fiches, budget ou densite manuelle.",
+          "- Le niveau est le seul controle de profondeur pedagogique visible et sa valeur est transmise au serveur.",
+          "- Le resultat explique de facon concise le nombre de fiches choisi et les adaptations de perimetre.",
+          "- Le client gere proprement une reponse sans fiche superflue et les informations de plan restent accessibles."
+        ],
+        "Problem": [
+          "- L'interface affiche et transmet un nombre cible de fiches, ce qui donne l'impression que le volume est une intention utilisateur.",
+          "- Les decisions de fusion, de prerequis et de granularite ne sont pas presentees de maniere suffisamment explicite."
+        ]
+      },
+      "status": "Ready",
+      "title": "Aligner l'interface Gnosis sur le niveau et le bilan pedagogique automatiques"
+    },
+    {
+      "ai_context": {},
+      "kind": "product",
+      "linked_refs": {
+        "item": [
+          "item_018_remplacer_le_quota_de_fiches_par_un_contrat_de_granularite_automatique",
+          "item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques"
+        ],
+        "prod": [
+          "prod_007_generation_gnosis_pilotee_par_la_couverture_pedagogique"
+        ],
+        "req": [
+          "req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique"
+        ],
+        "task": [
+          "task_011_livrer_la_generation_gnosis_a_granularite_automatique"
+        ]
+      },
+      "path": "logics/product/prod_007_generation_gnosis_pilotee_par_la_couverture_pedagogique.md",
+      "ref": "prod_007_generation_gnosis_pilotee_par_la_couverture_pedagogique",
+      "schema_version": "1.0",
+      "sections": {},
+      "status": "Proposed",
+      "title": "Generation Gnosis pilotee par la couverture pedagogique"
+    },
+    {
+      "ai_context": {
+        "keywords": "scaffolded-task, request-chain-scaffold, orchestration",
+        "skip when": "Working on one isolated sibling slice.",
+        "summary": "Livrer la generation Gnosis a granularite automatique",
+        "use when": "Coordinating implementation of a scaffolded request chain."
+      },
+      "kind": "task",
+      "linked_refs": {
+        "item": [
+          "item_018_remplacer_le_quota_de_fiches_par_un_contrat_de_granularite_automatique",
+          "item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques"
+        ],
+        "prod": [
+          "prod_007_generation_gnosis_pilotee_par_la_couverture_pedagogique"
+        ],
+        "req": [
+          "req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique"
+        ],
+        "task": [
+          "task_011_livrer_la_generation_gnosis_a_granularite_automatique"
+        ]
+      },
+      "path": "logics/tasks/task_011_livrer_la_generation_gnosis_a_granularite_automatique.md",
+      "ref": "task_011_livrer_la_generation_gnosis_a_granularite_automatique",
+      "schema_version": "1.0",
+      "sections": {
+        "Context": [
+          "- Orchestrate the scaffolded request chain and keep sibling implementation slices linked."
+        ],
+        "Validation": [
+          "- (no validation recorded yet)"
+        ]
+      },
+      "status": "Ready",
+      "title": "Livrer la generation Gnosis a granularite automatique"
+    }
+  ],
+  "estimates": {
+    "char_count": 9881,
+    "companion_doc_count": 1,
+    "doc_count": 5
+  },
+  "generated_at": "2026-08-07T15:54:20Z",
+  "handoff": {
+    "companion_doc_count": 1,
+    "enabled": true,
+    "source_refs": [
+      "req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique",
+      "item_018_remplacer_le_quota_de_fiches_par_un_contrat_de_granularite_automatique",
+      "item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques",
+      "task_011_livrer_la_generation_gnosis_a_granularite_automatique"
+    ],
+    "validation_summary_count": 1
+  },
+  "i18n": {
+    "actions": [
+      "Choose the source locale for app-owned user-facing copy.",
+      "Run logics-manager i18n init --source-locale <locale>.",
+      "Route new UI copy through stable semantic keys."
+    ],
+    "applicable": null,
+    "configured": false,
+    "contract_path": "logics/i18n/contract.json",
+    "findings": [],
+    "next_action": "Run logics-manager i18n init --source-locale <locale> for a project that owns user-facing copy.",
+    "ok": true,
+    "state": "absent"
+  },
+  "mode": "full",
+  "profile": "deep",
+  "ref": "req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique,item_018_remplacer_le_quota_de_fiches_par_un_contrat_de_granularite_automatique,item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques,task_011_livrer_la_generation_gnosis_a_granularite_automatique",
+  "refs": [
+    "req_010_rendre_la_granularite_pedagogique_de_gnosis_entierement_automatique",
+    "item_018_remplacer_le_quota_de_fiches_par_un_contrat_de_granularite_automatique",
+    "item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques",
+    "task_011_livrer_la_generation_gnosis_a_granularite_automatique"
+  ],
+  "release": {
+    "blocking_reasons": [
+      "version_metadata: evidence targets a different commit",
+      "changelog: evidence targets a different commit",
+      "local_validation: evidence targets a different commit",
+      "git_push: evidence targets a different commit",
+      "ci: evidence targets a different commit"
+    ],
+    "configured": true,
+    "contract_path": "logics/release/contract.json",
+    "guidance": [
+      "Release readiness must come from project-owned evidence, not conversational memory.",
+      "Use release status or validate before preparing or claiming release readiness.",
+      "Publication-oriented actions are explicit operator actions and are separate from safe read/validate actions."
+    ],
+    "next_action": "version_metadata: evidence targets a different commit",
+    "publication_actions": [
+      "GitHub release publication",
+      "external publication"
+    ],
+    "required_gates": [
+      {
+        "blocking_reason": "evidence targets a different commit",
+        "id": "version_metadata",
+        "required": true,
+        "state": "preparing",
+        "status": "stale"
+      },
+      {
+        "blocking_reason": "evidence targets a different commit",
+        "id": "changelog",
+        "required": true,
+        "state": "preparing",
+        "status": "stale"
+      },
+      {
+        "blocking_reason": "evidence targets a different commit",
+        "id": "local_validation",
+        "required": true,
+        "state": "local_validation",
+        "status": "stale"
+      },
+      {
+        "blocking_reason": "evidence targets a different commit",
+        "id": "git_push",
+        "required": true,
+        "state": "pushed",
+        "status": "stale"
+      },
+      {
+        "blocking_reason": "evidence targets a different commit",
+        "id": "ci",
+        "required": true,
+        "state": "ci_verification",
+        "status": "stale"
+      },
+      {
+        "blocking_reason": null,
+        "id": "github_release",
+        "required": true,
+        "state": "github_release",
+        "status": "passed"
+      }
+    ],
+    "safe_actions": [
+      "logics-manager release status",
+      "logics-manager release plan <version>",
+      "logics-manager release validate <version>"
+    ],
+    "state": "blocked",
+    "target_version": "1.1.9"
+  },
+  "validation_summary": [
+    {
+      "items": [
+        "- (no validation recorded yet)"
+      ],
+      "path": "logics/tasks/task_011_livrer_la_generation_gnosis_a_granularite_automatique.md",
+      "ref": "task_011_livrer_la_generation_gnosis_a_granularite_automatique"
+    }
+  ]
+}

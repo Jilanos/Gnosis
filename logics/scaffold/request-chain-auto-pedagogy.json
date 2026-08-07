@@ -1,0 +1,118 @@
+{
+  "title": "Rendre la granularite pedagogique de Gnosis entierement automatique",
+  "references": [
+    "src/client/main.jsx",
+    "src/server/app.mjs",
+    "src/server/openai-pipeline.mjs",
+    "src/server/mock-pipeline.mjs",
+    "src/server/card-metrics.mjs"
+  ],
+  "request": {
+    "complexity": "High",
+    "theme": "Pedagogical generation",
+    "needs": [
+      "Gnosis doit choisir automatiquement le nombre de fiches necessaires pour apprendre les notions saisies au niveau demande.",
+      "Le niveau choisi est la seule intensite pedagogique explicite : low, medium ou advanced.",
+      "Les prerequis et notions adjacentes ne peuvent etre ajoutes que lorsqu'ils sont indispensables a la comprehension; ils doivent etre justifies.",
+      "Le contenu et le decoupage ne doivent jamais etre etires ou reduits pour satisfaire un nombre de fiches, une duree ou un volume arbitraire."
+    ],
+    "context": [
+      "L'API impose aujourd'hui targetCards avec une valeur par defaut de 8 et le pipeline demande explicitement ce nombre cible au modele.",
+      "Le produit doit privilegier la couverture utile, la non-redondance et une granularite adaptee a chaque notion plutot qu'un volume predetermine.",
+      "La sortie doit rester un deck Kapsule valide, progressif et exploitable."
+    ],
+    "acceptance_criteria": [
+      "AC1: L'utilisateur choisit uniquement son niveau d'apprentissage (low, medium ou advanced); aucun nombre, budget ou curseur de fiches n'est expose ni requis.",
+      "AC2: Le pipeline calcule un plan avec le nombre minimal de fiches necessaires a une couverture progressive des notions et de leurs prerequis indispensables.",
+      "AC3: Chaque fiche correspond a un objectif d'apprentissage autonome, non redondant et relie a une notion saisie ou a un prerequis justifie.",
+      "AC4: Le modele peut fusionner des sous-notions et peut refuser des extensions non necessaires; il ne remplit jamais un quota de fiches, de mots ou de duree.",
+      "AC5: Le resultat expose un court bilan du plan : fiches retenues, notions fusionnees, prerequis ajoutes et raison pedagogique de chacun.",
+      "AC6: Les validations et tests couvrent des cas simples, intermediaires et avances, y compris une notion unique, des notions redondantes et des prerequis requis."
+    ]
+  },
+  "product": {
+    "title": "Generation Gnosis pilotee par la couverture pedagogique",
+    "overview": "Gnosis choisit seul la granularite utile d'un deck a partir des notions et du niveau voulu. Le produit vise une comprehension juste : ni decoupage artificiel, ni resume appauvri, ni extension decorative.",
+    "goals": [
+      "Faire du niveau d'apprentissage le principal signal de profondeur pedagogique.",
+      "Produire le minimum de fiches utiles, avec une couverture explicable et sans redondance.",
+      "Rendre visibles les decisions de planification qui modifient le perimetre initial."
+    ],
+    "non_goals": [
+      "Donner a l'utilisateur un controle manuel du nombre de fiches, de mots ou de minutes.",
+      "Couvrir exhaustivement un domaine entier lorsque seules quelques notions ont ete demandees.",
+      "Ajouter des notions connexes pour enrichir artificiellement le deck."
+    ]
+  },
+  "backlog_items": [
+    {
+      "title": "Remplacer le quota de fiches par un contrat de granularite automatique",
+      "priority": "High — le quota actuel incite directement a des fiches artificielles et contredit le principe produit.",
+      "complexity": "High",
+      "theme": "Pipeline pedagogique",
+      "request_acs": ["AC2", "AC3", "AC4", "AC6"],
+      "problem": [
+        "targetCards contraint le plan avant que la couverture pedagogique soit evaluee.",
+        "Les prompts et le mock ne distinguent pas suffisamment objectif autonome, prerequis indispensable et extension decorative."
+      ],
+      "scope_in": [
+        "Retirer targetCards du contrat API et du pipeline.",
+        "Definir une planification fondee sur la couverture, la dependance, la non-redondance et le niveau choisi.",
+        "Ajouter une justification structuree pour chaque prerequis ou notion ajoutee, et un bilan de plan.",
+        "Adapter le mock, les schemas, les validateurs et les tests."
+      ],
+      "scope_out": [
+        "Ajouter un reglages manuel de volume ou de duree.",
+        "Modifier le format Kapsule en dehors des champs necessaires a l'explication du plan."
+      ],
+      "acceptance_criteria": [
+        "Le plan derive son nombre de fiches de la couverture utile et ne recoit aucun quota numerique.",
+        "Chaque fiche planifiee declare son objectif, les notions couvertes et la raison de son autonomie.",
+        "Les prerequis ajoutes sont limites aux dependances indispensables et motives; les extensions ecartees sont tracees.",
+        "Les tests prouvent qu'aucun contenu n'est ajoute pour atteindre un volume predetermine."
+      ]
+    },
+    {
+      "title": "Aligner l'interface Gnosis sur le niveau et le bilan pedagogique automatiques",
+      "priority": "High — l'interface ne doit plus exposer une commande qui contredit le comportement automatique attendu.",
+      "complexity": "Medium",
+      "theme": "Experience de generation",
+      "request_acs": ["AC1", "AC5", "AC6"],
+      "problem": [
+        "L'interface affiche et transmet un nombre cible de fiches, ce qui donne l'impression que le volume est une intention utilisateur.",
+        "Les decisions de fusion, de prerequis et de granularite ne sont pas presentees de maniere suffisamment explicite."
+      ],
+      "scope_in": [
+        "Supprimer le controle de nombre de fiches du formulaire et de ses etats associes.",
+        "Conserver un choix clair de niveau avec des libelles coherents low, medium et advanced.",
+        "Afficher le bilan du plan et les justifications produites par le pipeline.",
+        "Tester les parcours client pertinents."
+      ],
+      "scope_out": [
+        "Ajouter des preferences de longueur, de temps de lecture ou de densite manuelles.",
+        "Changer l'identite visuelle generale de Gnosis."
+      ],
+      "acceptance_criteria": [
+        "Le formulaire ne propose aucun nombre cible de fiches, budget ou densite manuelle.",
+        "Le niveau est le seul controle de profondeur pedagogique visible et sa valeur est transmise au serveur.",
+        "Le resultat explique de facon concise le nombre de fiches choisi et les adaptations de perimetre.",
+        "Le client gere proprement une reponse sans fiche superflue et les informations de plan restent accessibles."
+      ]
+    }
+  ],
+  "orchestration_task": {
+    "title": "Livrer la generation Gnosis a granularite automatique",
+    "plan": [
+      "Cadrer le contrat de planification pedagogique et ses invariants de couverture avec une ADR si une decision durable est necessaire.",
+      "Implementer le contrat serveur, les schemas, le pipeline, le mock et les validations sans quota de fiches.",
+      "Adapter l'interface au seul choix de niveau et afficher le bilan de planification.",
+      "Ajouter les tests de non-remplissage, de fusion et de prerequis, puis verifier build, tests et parcours de generation.",
+      "Documenter les preuves de livraison et preparer une release SemVer appropriee."
+    ]
+  },
+  "context_pack": {
+    "out": "logics/context-pack-granularite-pedagogique-automatique.json",
+    "mode": "full",
+    "profile": "deep"
+  }
+}

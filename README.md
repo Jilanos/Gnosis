@@ -20,6 +20,8 @@ cadre par schemas.
 - Frontend : application web responsive, orientee outil, sans landing page.
 - Backend : API Node/Express, cle OpenAI jamais exposee au navigateur.
 - Generation : pipeline OpenAI en plusieurs etapes, pas un prompt unique.
+- Granularite : le nombre de fiches est deduit de la couverture pedagogique ;
+  l'utilisateur choisit uniquement son niveau.
 - Sortie : JSON strict conforme au contrat Kapsule `schemaVersion: 1`.
 - Validation : schema JSON local + boucle de reparation ciblee si besoin.
 
@@ -57,7 +59,7 @@ En developpement :
 1. Normalisation des sujets.
 2. Regroupement en familles pedagogiques.
 3. Expansion par notions proches.
-4. Plan de deck.
+4. Plan de deck a granularite automatique, avec bilan de planification.
 5. Generation du deck Kapsule.
 6. Validation locale.
 7. Reparation ciblee si OpenAI produit un JSON invalide.

@@ -30,6 +30,21 @@ export function compactTopics(topics, maxTopics) {
   );
 }
 
+// Le niveau est la seule intensite pedagogique explicite. Les libelles produit
+// low / medium / advanced sont acceptes comme alias des valeurs Kapsule.
+const LEVEL_ALIASES = {
+  low: "debutant",
+  debutant: "debutant",
+  medium: "intermediaire",
+  intermediaire: "intermediaire",
+  advanced: "avance",
+  avance: "avance",
+};
+
+export function resolveLevel(value, fallback = "intermediaire") {
+  return LEVEL_ALIASES[String(value ?? "").trim().toLowerCase()] ?? fallback;
+}
+
 export function clampInteger(value, min, max, fallback) {
   const parsed = Number.parseInt(value, 10);
   if (!Number.isFinite(parsed)) return fallback;

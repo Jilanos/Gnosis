@@ -31,7 +31,9 @@ Responsabilites :
 
 - Saisie multi-ligne des sujets.
 - Chips de sujets detectes.
-- Options de generation : langue, niveau, densite, nombre cible de fiches.
+- Options de generation : langue et niveau d'apprentissage uniquement.
+- Affichage du bilan de planification : fiches retenues, fusions, prerequis,
+  extensions ecartees.
 - Affichage du plan intermediaire.
 - Etat d'avancement du pipeline.
 - Apercu du deck final.
@@ -54,7 +56,7 @@ Configuration attendue :
 
 - `OPENAI_API_KEY`
 - `OPENAI_MODEL`
-- `MAX_CARDS`
+- `MAX_CARDS` (plafond technique de fiches, pas une cible pedagogique)
 - `MAX_INPUT_TOPICS`
 
 ### Schemas
@@ -119,13 +121,20 @@ Sortie attendue :
 
 ### Plan de deck
 
+Le plan ne recoit aucun nombre cible de fiches : il derive le nombre minimal de
+fiches de la couverture progressive des notions saisies et de leurs prerequis
+indispensables.
+
 Sortie attendue :
 
 - titre du deck,
 - description,
 - tags,
+- bilan de planification : raison du plan, notions fusionnees, prerequis
+  ajoutes et justifies, extensions ecartees,
 - liste de fiches,
-- objectif de chaque fiche,
+- objectif de chaque fiche et raison de son autonomie,
+- origine de chaque fiche (notion saisie ou prerequis) et notion source,
 - duree estimee,
 - niveau,
 - notions couvertes.

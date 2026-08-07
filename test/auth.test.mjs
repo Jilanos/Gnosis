@@ -96,7 +96,7 @@ test("federated login reuses a ClaimLens OpenAI key and isolates jobs", async ()
   const generated = await userAgent
     .post("/api/generate-deck")
     .set("x-csrf-token", login.body.csrfToken)
-    .send({ topics: ["DNS", "TCP"], options: { targetCards: 2 } })
+    .send({ topics: ["DNS", "TCP"] })
     .expect(202);
   const completed = await waitForCompletion(userAgent, generated.body.id);
   assert.equal(completed.status, "completed");
@@ -111,7 +111,7 @@ test("guest keys remain request-local and guest jobs are isolated", async () => 
   const guestKey = "sk-test-guest-only";
   const response = await guest
     .post("/api/generate-deck")
-    .send({ topics: ["DNS", "TCP"], options: { targetCards: 2 }, apiKey: guestKey })
+    .send({ topics: ["DNS", "TCP"], apiKey: guestKey })
     .expect(202);
   const completed = await waitForCompletion(guest, response.body.id);
   assert.equal(completed.status, "completed");

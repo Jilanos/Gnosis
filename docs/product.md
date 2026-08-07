@@ -35,8 +35,9 @@ Gnosis doit fiabiliser cette transformation.
 ## Parcours utilisateur MVP
 
 1. L'utilisateur colle une liste de sujets techniques.
-2. Il choisit quelques options : langue, niveau, densite, nombre cible de
-   fiches, granularite.
+2. Il choisit la langue et son niveau d'apprentissage (low, medium,
+   advanced). Aucun nombre de fiches, budget ou densite n'est demande :
+   Gnosis deduit seul la granularite necessaire.
 3. Gnosis affiche un plan intermediaire : familles, notions retenues, notions
    ajoutees, ordre pedagogique.
 4. L'utilisateur lance la generation du deck.
@@ -101,7 +102,9 @@ Out:
 ## Qualite attendue
 
 - Fiches lisibles en 5 a 10 minutes.
-- Une fiche = un concept digestible.
+- Une fiche = un objectif d'apprentissage autonome et non redondant.
+- Le nombre de fiches derive de la couverture utile, jamais d'un quota.
+- Prerequis ajoutes uniquement s'ils sont indispensables, et toujours justifies.
 - Deck progressif.
 - Definitions concretes, exemples et pieges.
 - Pas de proprietes hors schema Kapsule.
