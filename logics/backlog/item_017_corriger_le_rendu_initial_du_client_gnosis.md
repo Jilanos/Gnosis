@@ -1,10 +1,10 @@
 ## item_017_corriger_le_rendu_initial_du_client_gnosis - Corriger le rendu initial du client Gnosis
 > From version: 1.1.8
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 60%
+> Progress: 100%
 > Complexity: High
 > Theme: Operator workflow and runtime integration
 > Reminder: Update status/understanding/confidence/progress and linked request/task references when you edit this doc.
@@ -39,8 +39,8 @@ Deliver a bounded request for corriger le rendu initial du client gnosis.
 # Links
 - Product brief(s): (none yet)
 - Architecture decision(s): (none yet)
-- Request: `logics/request/req_009_corriger_le_rendu_initial_du_client_gnosis.md`
-- Primary task(s): (none yet)
+- Request: `req_009_corriger_le_rendu_initial_du_client_gnosis`
+- Primary task(s): `task_010_corriger_le_rendu_initial_du_client_gnosis`
 
 # AI Context
 - Summary: Corriger le rendu initial du client Gnosis
@@ -56,6 +56,7 @@ Deliver a bounded request for corriger le rendu initial du client gnosis.
 - Hybrid rationale: Derived from request `req_009_corriger_le_rendu_initial_du_client_gnosis` and kept bounded to one coherent delivery slice.
 - Source file: `logics/request/req_009_corriger_le_rendu_initial_du_client_gnosis.md`.
 - Generated locally by logics-manager.
+- Task `task_010_corriger_le_rendu_initial_du_client_gnosis` was finished via `logics-manager flow finish task` on 2026-08-07.
 
 # Tasks
 - `task_010_corriger_le_rendu_initial_du_client_gnosis`

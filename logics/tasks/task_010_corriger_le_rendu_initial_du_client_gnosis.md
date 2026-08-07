@@ -1,20 +1,20 @@
 ## task_010_corriger_le_rendu_initial_du_client_gnosis - Corriger le rendu initial du client Gnosis
 > From version: 1.1.8
 > Schema version: 1.0
-> Status: In progress
+> Status: Done
 > Understanding: 90%
 > Confidence: 85%
-> Progress: 60%
+> Progress: 100%
 > Complexity: Medium
 > Theme: Implementation delivery
 > Reminder: Update status/understanding/confidence/progress and linked request/backlog references when you edit this doc.
 > Owner: Codex
 
 # Definition of Done (DoD)
-- [ ] The backlog scope is implemented.
-- [ ] Acceptance criteria are covered.
-- [ ] Validation passes.
-- [ ] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
+- [x] The backlog scope is implemented.
+- [x] Acceptance criteria are covered.
+- [x] Validation passes.
+- [x] Meaningful waves followed ADR 009: affected docs updated and the repo left commit-ready without automatic commits.
 
 # Backlog
 - `item_017_corriger_le_rendu_initial_du_client_gnosis`
@@ -25,14 +25,19 @@
 - AC3: The request is ready to be promoted into a backlog slice.
 
 # Plan
-- [ ] Use `python3 -m logics_manager flow progress task task_010_corriger_le_rendu_initial_du_client_gnosis.md --progress <n>%` during multi-wave work.
-- [ ] Run `python3 -m logics_manager flow finish task task_010_corriger_le_rendu_initial_du_client_gnosis.md` after implementation.
+- [x] Use `python3 -m logics_manager flow progress task task_010_corriger_le_rendu_initial_du_client_gnosis.md --progress <n>%` during multi-wave work.
+- [x] Run `python3 -m logics_manager flow finish task task_010_corriger_le_rendu_initial_du_client_gnosis.md` after implementation.
 
 # Validation
 - Local validation passed: npm test and npm run build.
+- Finish workflow executed on 2026-08-07.
+- Linked backlog/request close verification passed.
 
 # Report
 - Not started.
+- Finished on 2026-08-07.
+- Linked backlog item(s): `item_017_corriger_le_rendu_initial_du_client_gnosis`
+- Related request(s): `req_009_corriger_le_rendu_initial_du_client_gnosis`
 
 # AI Context
 - Summary: Implement corriger le rendu initial du client gnosis.
@@ -44,3 +49,8 @@
 - Request: `req_009_corriger_le_rendu_initial_du_client_gnosis`
 - Product brief(s): (none yet)
 - Architecture decision(s): (none yet)
+
+# AC Traceability
+- request-AC1 -> This task. Evidence needed: The request states the bounded need for corriger le rendu initial du client gnosis.
+- request-AC2 -> This task. Evidence needed: Scope boundaries and operator impact are explicit.
+- request-AC3 -> This task. Evidence needed: The request is ready to be promoted into a backlog slice.

@@ -1,7 +1,7 @@
 ## req_009_corriger_le_rendu_initial_du_client_gnosis - Corriger le rendu initial du client Gnosis
 > From version: 1.1.8
 > Schema version: 1.0
-> Status: Draft
+> Status: Done
 > Understanding: L'icône Brain est utilisée sans être importée, ce qui fait planter le front au rendu initial.
 > Confidence: High
 > Complexity: Medium
@@ -21,10 +21,10 @@
 - AC3: The request is ready to be promoted into a backlog slice.
 
 # Definition of Ready (DoR)
-- [ ] Problem statement is explicit and user impact is clear.
-- [ ] Scope boundaries (in/out) are explicit.
-- [ ] Acceptance criteria are testable.
-- [ ] Dependencies and known risks are listed.
+- [x] Problem statement is explicit and user impact is clear.
+- [x] Scope boundaries (in/out) are explicit.
+- [x] Acceptance criteria are testable.
+- [x] Dependencies and known risks are listed.
 
 # Companion docs
 - Product brief(s): (none yet)
