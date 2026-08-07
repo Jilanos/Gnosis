@@ -2,8 +2,8 @@
 > From version: 1.1.8
 > Schema version: 1.0
 > Status: Done
-> Understanding: L'icône Brain est utilisée sans être importée, ce qui fait planter le front au rendu initial.
-> Confidence: High
+> Understanding: 90
+> Confidence: 85
 > Complexity: Medium
 > Theme: General
 > Reminder: Update status/understanding/confidence and linked backlog/task references when you edit this doc.
