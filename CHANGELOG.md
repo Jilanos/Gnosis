@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.3.0 - 2026-08-07
+
+- Measure the token consumption of every pipeline call: input, cached input, output and reasoning tokens, aggregated per stage and exposed in the generation result.
+- Attach the consumption to the job as it runs, so a failed or cancelled generation still reports what it already spent, in the API and in the interface.
+- Send only the expansion of the families a card batch covers instead of the whole expansion: 56% fewer input tokens on the card-writing stage of a measured 20-card deck.
+- Add `GNOSIS_TOKEN_BUDGET`, a hard token ceiling that stops a generation with an explicit error while keeping the measured consumption.
+- Add the optional `OPENAI_REASONING_EFFORT` lever, sent only when configured.
+- Require a card batch to return exactly the planned cards, instead of silently dropping missing ones.
+- Lower the card word floors to 800/1200: they are readability floors, not volumes to fill.
+
 ## 1.2.2 - 2026-08-07
 
 - Pass the abort signal as an OpenAI request option instead of a body field: every real generation was rejected with `HTTP 400 Unknown parameter: 'signal'`, and cancellation now actually reaches OpenAI.
