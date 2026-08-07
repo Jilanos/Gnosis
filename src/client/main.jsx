@@ -38,7 +38,9 @@ Docker
 CI/CD
 observabilite`;
 
-const GENERATION_TIMEOUT_MS = 180_000;
+// Un deck complet peut demander une vingtaine d'appels au modele: le garde-fou
+// client doit couvrir la generation reelle, pas la couper en cours de route.
+const GENERATION_TIMEOUT_MS = 1_800_000;
 const APP_VERSION = packageJson.version;
 
 const LEVELS = [
@@ -247,7 +249,7 @@ function App() {
     } catch (error) {
       const message =
         error.name === "AbortError"
-          ? "Generation interrompue: le delai maximal de 120 secondes est depasse."
+          ? "Generation interrompue: le delai maximal de 30 minutes est depasse."
           : error.message;
       if (error.name === "AbortError" && jobId) {
         await fetch(`/api/generate-deck/${jobId}`, {

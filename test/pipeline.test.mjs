@@ -144,8 +144,8 @@ test("callStructured sends a bounded max_output_tokens budget", async () => {
   const calls = [];
   const client = {
     responses: {
-      async create(payload) {
-        calls.push(payload);
+      async create(payload, options) {
+        calls.push({ payload, options });
         return { status: "completed", output_text: '{"ok":true}' };
       },
     },
@@ -169,7 +169,64 @@ test("callStructured sends a bounded max_output_tokens budget", async () => {
   );
 
   assert.deepEqual(result, { ok: true });
-  assert.equal(calls[0].model, "gpt-test");
-  assert.equal(calls[0].max_output_tokens, 4321);
-  assert.equal(calls[0].store, false);
+  assert.equal(calls[0].payload.model, "gpt-test");
+  assert.equal(calls[0].payload.max_output_tokens, 4321);
+  assert.equal(calls[0].payload.store, false);
+});
+
+test("callStructured passes the abort signal as a request option, never in the body", async () => {
+  const calls = [];
+  const client = {
+    responses: {
+      async create(payload, options) {
+        calls.push({ payload, options });
+        return { status: "completed", output_text: '{"ok":true}' };
+      },
+    },
+  };
+  const controller = new AbortController();
+
+  await callStructured(
+    client,
+    resolveOpenAISettings({ OPENAI_MODEL: "gpt-test" }),
+    "test_schema",
+    { type: "object", additionalProperties: false, required: ["ok"], properties: { ok: { type: "boolean" } } },
+    [{ role: "user", content: "test" }],
+    { signal: controller.signal },
+  );
+
+  // OpenAI rejette la requete avec "Unknown parameter: 'signal'" si le signal
+  // se retrouve dans le corps: toute generation reelle echouait en HTTP 400.
+  assert.equal("signal" in calls[0].payload, false);
+  assert.equal(calls[0].options.signal, controller.signal);
+});
+
+test("a failed OpenAI call reports the upstream status and message", async () => {
+  const client = {
+    responses: {
+      async create() {
+        const error = new Error("400 Unknown parameter: 'signal'.");
+        error.status = 400;
+        throw error;
+      },
+    },
+  };
+
+  await assert.rejects(
+    () =>
+      callStructured(
+        client,
+        resolveOpenAISettings({ OPENAI_MODEL: "gpt-test" }),
+        "test_schema",
+        { type: "object", additionalProperties: false, required: ["ok"], properties: { ok: { type: "boolean" } } },
+        [{ role: "user", content: "test" }],
+      ),
+    (error) => {
+      assert.equal(error.code, "OPENAI_REQUEST_FAILED");
+      assert.equal(error.status, 400);
+      assert.match(error.message, /HTTP 400/);
+      assert.match(error.message, /Unknown parameter/);
+      return true;
+    },
+  );
 });

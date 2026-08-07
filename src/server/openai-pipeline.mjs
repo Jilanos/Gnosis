@@ -12,7 +12,9 @@ import { assertDeck, validateDeck, validationSummary } from "./validation.mjs";
 import { slugify, uniqueSlug } from "./utils.mjs";
 
 const DEFAULT_OPENAI_MODEL = "gpt-5.6";
-const DEFAULT_OPENAI_TIMEOUT_MS = 60_000;
+// Un appel de plan ou de fiche avec un modele de raisonnement depasse largement
+// la minute: un plafond trop bas coupait la generation en cours d'etape.
+const DEFAULT_OPENAI_TIMEOUT_MS = 240_000;
 const DEFAULT_OPENAI_MAX_RETRIES = 1;
 const DEFAULT_MAX_OUTPUT_TOKENS = 12_000;
 const DEFAULT_DECK_BATCH_SIZE = 1;
@@ -99,23 +101,38 @@ function classifyOpenAIError(error) {
       cause: error,
     });
   }
-  return new PipelineError("L'appel OpenAI a echoue.", {
+  // Le detail renvoye par OpenAI est la seule information exploitable pour
+  // diagnostiquer un echec depuis l'interface: on le remonte au lieu de le perdre.
+  return new PipelineError(`L'appel OpenAI a echoue: ${upstreamDetail(error)}`, {
     code: "OPENAI_REQUEST_FAILED",
     status: error?.status || 502,
     cause: error,
   });
 }
 
+function upstreamDetail(error) {
+  const status = error?.status ? `HTTP ${error.status}` : "sans reponse HTTP";
+  const detail = String(error?.error?.message || error?.message || "raison inconnue")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 300);
+  return `${status} - ${detail}`;
+}
+
 export async function callStructured(client, settings, name, schema, input, overrides = {}) {
   try {
-    const response = await client.responses.create({
-      model: settings.model,
-      store: false,
-      input,
-      text: jsonFormat(name, schema),
-      max_output_tokens: overrides.maxOutputTokens || settings.maxOutputTokens,
-      signal: overrides.signal,
-    });
+    // `signal` est une option de requete du SDK: le placer dans le corps fait
+    // rejeter l'appel par OpenAI ("Unknown parameter: 'signal'").
+    const response = await client.responses.create(
+      {
+        model: settings.model,
+        store: false,
+        input,
+        text: jsonFormat(name, schema),
+        max_output_tokens: overrides.maxOutputTokens || settings.maxOutputTokens,
+      },
+      { signal: overrides.signal },
+    );
     return parseOutput(response);
   } catch (error) {
     if (error instanceof PipelineError) throw error;
