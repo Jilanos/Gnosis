@@ -48,7 +48,10 @@
 
 # Report
 - Livraison implementee: contrat de granularite automatique cote serveur, pipeline, mock, schemas, interface et documentation.
-- Release preparee en 1.2.0 (package.json, package-lock.json, CHANGELOG.md); commit, push, CI et tag restent sous controle operateur.
+- Release 1.2.0 livree: commit d'implementation `4caf778`, commit de preparation `3d72005`, push `af06d67..3d72005` sur main.
+- CI verte sur `3d72005`: run 31198319575 (https://github.com/Jilanos/Gnosis/actions/runs/31198319575).
+- Tag annote `v1.2.0` sur `3d72005`; workflow Release by tag 31198485576 success (build, deploy, release); `/api/health` renvoie `v1.2.0`.
+- Preuves de release enregistrees dans `logics/release/evidence.jsonl` (7 portes, npm_package skipped).
 - Docs produit et architecture alignes sur le niveau comme seule intensite pedagogique et sur le bilan de planification.
 - Finished on 2026-08-07.
 - Linked backlog item(s): `item_018_remplacer_le_quota_de_fiches_par_un_contrat_de_granularite_automatique`, `item_019_aligner_l_interface_gnosis_sur_le_niveau_et_le_bilan_pedagogique_automatiques`
